@@ -1,0 +1,80 @@
+<MainScreen>:
+    name: "main"
+    
+    canvas.before:
+        Color:
+            rgba: (1, 1, 1, 1)  # Background color (optional)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+            
+    MDFloatLayout:
+        # Background Image
+        Image:
+            source: "assets/image.png"  # Background image path
+            allow_stretch: True  # Allow image to stretch to fill the space
+            keep_ratio: False
+            size_hint: 1, 1
+            pos_hint: {"center_x": .5, "center_y": .5}  # Center the image
+            
+        # Logo Section
+        Image:
+            source: "assets/logo2.png"
+            size_hint: None, None
+            size: dp(150), dp(150)  # Adjust size for mobile
+            pos_hint: {"center_x": .5, "center_y": .85}
+
+        # Title Section
+        MDLabel:
+            text: "P E T W A T C H"
+            font_name: "BPoppins"
+            font_size: "25sp"  # Slightly larger for better visibility
+            pos_hint: {"center_y": .75}  # Adjusted for centering
+            halign: "center"
+            color: (79 / 255, 54 / 255, 48 / 255, 1)  # Normalized RGBA
+        
+        # Description Section
+        MDLabel:
+            text: "Your pet's best friend!"
+            font_name: "MPoppins"
+            font_size: "15sp"  # Slightly larger for better readability
+            size_hint_x: .85
+            pos_hint: {"center_x": .5, "center_y": .70}
+            halign: "center"
+            color: (135 / 255, 80 / 255, 18 / 255, 1)  # Normalized RGBA
+        
+        # Login Button
+        Button:
+            text: "LOGIN"
+            size_hint: .66, .065
+            pos_hint: {"center_x": .5, "center_y": .25}  # Moved up for better spacing
+            background_color: 0, 0, 0, 0
+            font_name: "BPoppins"
+            on_release:
+                root.manager.transition.direction = "left"
+                root.manager.current = "login"
+            canvas.before:
+                Color:
+                    rgba: (79 / 255, 54 / 255, 48 / 255, 1)  # Normalized RGBA
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [5]
+
+        # Sign Up Button
+        Button:
+            text: "SIGN UP"
+            size_hint: .66, .065
+            pos_hint: {"center_x": .5, "center_y": .16}  # Moved up for better spacing
+            background_color: 0, 0, 0, 0
+            font_name: "BPoppins"
+            color: (79 / 255, 54 / 255, 48 / 255, 1)  # Normalized RGBA
+            on_release:
+                root.manager.transition.direction = "left"
+                root.manager.current = "signup"
+            canvas.before:
+                Color:
+                    rgba: (79 / 255, 54 / 255, 48 / 255, 1)  # Normalized RGBA
+                Line:
+                    width: 2
+                    rounded_rectangle: self.x, self.y, self.width, self.height, 5, 5, 5, 5, 100

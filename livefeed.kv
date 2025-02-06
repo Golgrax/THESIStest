@@ -1,0 +1,74 @@
+<LiveFeedScreen>:
+    name: "live_feed"
+    
+    # Main container
+    BoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: "Camera Live Feed"
+            font_name: "BPoppins"
+            pos_hint: {"top": 1}
+            elevation: 0
+            md_bg_color: 250/255, 188/255, 63/255, 1
+            size_hint_y: None
+            height: dp(45)
+
+            left_action_items: [["camera", lambda x: root.go_to_live_feed()]]
+            right_action_items: [["thermometer", lambda x: root.go_to_thermal_feed()]]
+
+        # Content area with the live feed
+        BoxLayout:
+            orientation: 'vertical'
+            size_hint_y: None
+            height: self.minimum_height  # Adjust height to fit content
+            
+            Image:
+                id: live_feed
+                size_hint: 1, 1
+                allow_stretch: True
+                keep_ratio: False
+
+# Bottom navigation stays outside of the scrollable area
+        MDBottomNavigation:
+            panel_color: 250/255, 177/255, 47/255, 1
+            selected_color_background: 1, 1, 1, 0  
+            text_color_active: 79/255, 54/255, 48/255, 1
+            text_color_normal: 217/255, 90/255, 26/255, 1
+            size_hint_y: 0.2
+            
+
+            MDBottomNavigationItem:
+                name: "home"
+                icon: "home"
+                text: "Home"
+                md_bg_color: 243/255, 233/255, 226/255, 1
+                on_tab_press: root.home()
+                  
+            MDBottomNavigationItem:
+                name: "activitylogs"
+                icon: "file-document"
+                text: "Activity Logs"
+                md_bg_color: 243/255, 233/255, 226/255, 1
+                on_tab_press: root.activity_logs()
+                
+            MDBottomNavigationItem:
+                name: "camera"
+                icon: "camera"
+                text: "Camera"
+                md_bg_color: 243/255, 233/255, 226/255, 1
+                on_tab_press: root.go_to_live_feed()
+
+            MDBottomNavigationItem:
+                name: "pet"
+                icon: "dog"
+                text: "Pet"
+                md_bg_color: 243/255, 233/255, 226/255, 1
+                on_tab_press: root.pet_tab()
+
+            MDBottomNavigationItem:
+                name: "profile"
+                icon: "account"
+                text: "Profile"
+                md_bg_color: 251/255, 228/255, 189/255, 1
+                on_tab_press: root.profile_tab()

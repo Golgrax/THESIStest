@@ -1,0 +1,298 @@
+<PetTabScreen>:
+    name: "pet_tab"
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: "Pet"
+            font_name: "BPoppins"
+            elevation: 0
+            md_bg_color: 250/255, 188/255, 63/255, 1
+            specific_text_color: 1, 1, 1, 1
+            size_hint_y: None
+            height: dp(50)
+
+        # Main Content with ScrollView
+        ScrollView:
+            do_scroll_x: False
+            bar_width: 0  # Hide the scroll bar
+            canvas.before:
+                Color:
+                    rgba: 1, 1, 1, 1
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(10)
+                spacing: dp(10)
+
+                # Pet Profile Header
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint: 0.9, None
+                    height: dp(50)
+                    pos_hint: {"center_x": 0.5}
+                    spacing: dp(10)
+
+                    MDLabel:
+                        text: "Edit Pet Profile"
+                        font_name: "BPoppins"
+                        font_size: "20sp"
+                        halign: "left"
+                        valign: "middle"
+                        color: 0, 0, 0, 1
+
+                    Image:
+                        source: "assets/pet_profile_icon.png"
+                        size_hint: None, None
+                        size: "40dp", "40dp"
+                        allow_stretch: True
+                        keep_ratio: True
+
+                # Add Image Button
+                AnchorLayout:
+                    anchor_x: 'center'
+                    size_hint_y: None
+                    height: dp(100)
+
+                    Image:
+                        source: "assets/add_image.png"
+                        size_hint: None, None
+                        size: "80dp", "80dp"
+                        allow_stretch: True
+                        keep_ratio: True
+
+                # Profile Info Section (Single Column)
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint: 0.9, None
+                    height: self.minimum_height
+                    pos_hint: {"center_x": 0.5}
+                    spacing: dp(10)
+
+                    # Pet's Name Input Field
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: dp(40)
+                        spacing: 5
+                        canvas.before:
+                            Color:
+                                rgba: (120/255, 89/255, 66/255, 1)
+                            Line:
+                                rounded_rectangle: self.x, self.y, self.width, self.height, 5
+                                width: 1.1
+
+                        TextInput:
+                            id: pet_name_input
+                            hint_text: "Pet's Name"
+                            font_name: "MPoppins"
+                            size_hint_x: 1
+                            multiline: False
+                            background_color: 1, 1, 1, 0
+                            foreground_color: 0, 0, 0, 1
+                            cursor_color: 0, 0, 0, 1
+                            padding: dp(5)
+
+                    # New Pet's Name Input Field
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: dp(40)
+                        spacing: 5
+                        canvas.before:
+                            Color:
+                                rgba: (120/255, 89/255, 66/255, 1)
+                            Line:
+                                rounded_rectangle: self.x, self.y, self.width, self.height, 5
+                                width: 1.1
+
+                        TextInput:
+                            id: new_pet_name_input
+                            hint_text: "New Pet's Name"
+                            font_name: "MPoppins"
+                            size_hint_x: 1
+                            multiline: False
+                            background_color: 1, 1, 1, 0
+                            foreground_color: 0, 0, 0, 1
+                            cursor_color: 0, 0, 0, 1
+                            padding: dp(5)
+
+                    # Breed Input Field
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: dp(40)
+                        spacing: 5
+                        canvas.before:
+                            Color:
+                                rgba: (120/255, 89/255, 66/255, 1)
+                            Line:
+                                rounded_rectangle: self.x, self.y, self.width, self.height, 5
+                                width: 1.1
+
+                        TextInput:
+                            id: pet_breed_input
+                            hint_text: "Breed"
+                            font_name: "MPoppins"
+                            size_hint_x: 1
+                            multiline: False
+                            background_color: 1, 1, 1, 0
+                            foreground_color: 0, 0, 0, 1
+                            cursor_color: 0, 0, 0, 1
+                            padding: dp(5)
+
+                    # Gender Selection with Checkboxes
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: dp(40)
+                        spacing: dp(10)
+
+                        MDLabel:
+                            text: "Sex:"
+                            size_hint_x: 0.3
+                            halign: "left"
+                            valign: "center"
+
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_x: 0.7
+                            spacing: dp(5)
+
+                            MDCheckbox:
+                                id: male_checkbox
+                                size_hint: None, None
+                                size: "30dp", "30dp"
+                                on_active: root.set_gender("Male") if self.active else None
+
+                            MDLabel:
+                                text: "Male"
+                                size_hint_x: None
+                                width: "70dp"
+                                halign: "left"
+                                valign: "center"
+
+                            MDCheckbox:
+                                id: female_checkbox
+                                size_hint: None, None
+                                size: "30dp", "30dp"
+                                on_active: root.set_gender("Female") if self.active else None
+
+                            MDLabel:
+                                text: "Female"
+                                size_hint_x: None
+                                width: "70dp"
+                                halign: "left"
+                                valign: "center"
+
+                    # Age and Age Unit in the same row
+                    BoxLayout:
+                        orientation: 'horizontal'
+                        size_hint_y: None
+                        height: dp(40)
+                        spacing: dp(10)
+
+                        # Age Input Field
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            size_hint_x: 0.6
+                            spacing: 5
+                            canvas.before:
+                                Color:
+                                    rgba: (120/255, 89/255, 66/255, 1)
+                                Line:
+                                    rounded_rectangle: self.x, self.y, self.width, self.height, 5
+                                    width: 1.1
+
+                            TextInput:
+                                id: pet_age_input
+                                hint_text: "Age"
+                                font_name: "MPoppins"
+                                input_filter: "int"
+                                size_hint_x: 1
+                                multiline: False
+                                background_color: 1, 1, 1, 0
+                                foreground_color: 0, 0, 0, 1
+                                cursor_color: 0, 0, 0, 1
+                                padding: dp(10)
+
+                        # Age Unit Dropdown Button
+                        MDRaisedButton:
+                            id: age_unit_dropdown
+                            text: "Select Unit"
+                            size_hint_x: 0.4
+                            on_release: root.open_age_unit_menu()
+                            md_bg_color: 0.31, 0.21, 0.18, 1
+
+                # Save Button Section
+                AnchorLayout:
+                    anchor_x: "center"
+                    size_hint_y: None
+                    height: dp(70)
+
+                    Button:
+                        text: "Save Changes"
+                        size_hint: 0.4, None
+                        height: dp(40)
+                        font_name: "BPoppins"
+                        font_size: "13sp"
+                        background_color: 0, 0, 0, 0
+                        color: 1, 1, 1, 1
+                        on_release: root.update_pet_profile()
+                        canvas.before:
+                            Color:
+                                rgba: 0.31, 0.21, 0.18, 1
+                            RoundedRectangle:
+                                size: self.size
+                                pos: self.pos
+                                radius: [10]
+
+# Bottom navigation stays outside of the scrollable area
+        MDBottomNavigation:
+            panel_color: 250/255, 177/255, 47/255, 1
+            selected_color_background: 1, 1, 1, 0  
+            text_color_active: 79/255, 54/255, 48/255, 1
+            text_color_normal: 217/255, 90/255, 26/255, 1
+            size_hint_y: 0.2
+            
+
+            MDBottomNavigationItem:
+                name: "home"
+                icon: "home"
+                text: "Home"
+                md_bg_color: 1, 1, 1, 1
+                on_tab_press: root.home()
+                  
+            MDBottomNavigationItem:
+                name: "activitylogs"
+                icon: "file-document"
+                text: "Activity Logs"
+                md_bg_color: 1, 1, 1, 1
+                on_tab_press: root.activity_logs()
+                
+            MDBottomNavigationItem:
+                name: "camera"
+                icon: "camera"
+                text: "Camera"
+                md_bg_color: 1, 1, 1, 1
+                on_tab_press: root.go_to_live_feed()
+
+            MDBottomNavigationItem:
+                name: "pet"
+                icon: "dog"
+                text: "Pet"
+                md_bg_color: 1, 1, 1, 1
+                on_tab_press: root.pet_tab()
+
+            MDBottomNavigationItem:
+                name: "profile"
+                icon: "account"
+                text: "Profile"
+                md_bg_color: 1, 1, 1, 1
+                on_tab_press: root.profile_tab()

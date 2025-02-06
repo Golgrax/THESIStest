@@ -1,0 +1,186 @@
+<UserGuideScreen>:
+    name: "userguide"
+
+    canvas.before:
+        Color:
+            rgba: 237/255, 165/255, 78/255, 1  # Light Orange background
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    MDBoxLayout:
+        orientation: 'vertical'
+
+        # Top App Bar with back button
+        MDTopAppBar:
+            title: "User Guide"
+            font_name: "BPoppins"  # Custom font for the title
+            left_action_items: [["arrow-left", lambda x: app.cancel_changes()]]  # Back button
+            elevation: 0
+            md_bg_color: 250/255, 188/255, 63/255, 1
+            specific_text_color: 1, 1, 1, 1  # White text color
+            size_hint_y: None
+            height: dp(45)  # Height of the top bar
+
+        # Scrollable content
+        ScrollView:
+            do_scroll_x: False  # Disable horizontal scrolling
+            do_scroll_y: True   # Enable vertical scrolling
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                padding: dp(20)
+                spacing: dp(15)
+                height: self.minimum_height  # Adjust height to fit content
+
+                # Introduction section
+                MDLabel:
+                    text: "Welcome to Petwatch!"
+                    font_style: "H5"
+                    font_name: "BPoppins"
+                    halign: "center"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)  # Add spacing
+
+                MDLabel:
+                    text: "Petwatch is a camera-based behavioral monitoring and mobile app designed to help you understand your pet's health and activities. Follow the guide below to get started."
+                    font_style: "Body1"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    halign: "justify"
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                # Step 1: Setting up the Camera
+                MDLabel:
+                    text: "Step 1: Setting up the Camera"
+                    font_style: "Subtitle1"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                MDLabel:
+                    text: "• Position the camera in an area where your pet spends most of its time."
+                    font_style: "Body2"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    halign: "justify"
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                MDLabel:
+                    text: "• Ensure the camera is connected to power and a stable Wi-Fi network."
+                    font_style: "Body2"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    halign: "justify"
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                MDLabel:
+                    text: "• Link the camera to the Petwatch app by following the pairing instructions in the app's settings."
+                    font_style: "Body2"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    halign: "justify"
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                # Step 2: Monitoring your Pet
+                MDLabel:
+                    text: "Step 2: Monitoring your Pet"
+                    font_style: "Subtitle1"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                MDLabel:
+                    text: "• Open the app and navigate to the live camera feed to watch your pet in real-time."
+                    font_style: "Body2"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    halign: "justify"
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                MDLabel:
+                    text: "• Use the app to record behaviors, take snapshots, or review past recordings."
+                    font_style: "Body2"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    halign: "justify"
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                # Step 3: Viewing Behavioral Insights
+                MDLabel:
+                    text: "Step 3: Viewing Behavioral Insights"
+                    font_style: "Subtitle1"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                MDLabel:
+                    text: "• Access the 'Insights' section to view detailed reports on your pet's behavior."
+                    font_style: "Body2"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    halign: "justify"
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                MDLabel:
+                    text: "• Review trends, alerts, and suggested actions based on AI analysis of your pet's activities."
+                    font_style: "Body2"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    halign: "justify"
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                # Troubleshooting section
+                MDLabel:
+                    text: "Need Help?"
+                    font_style: "Subtitle1"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                MDLabel:
+                    text: "• Check the FAQs section in the app for quick solutions."
+                    font_style: "Body2"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    halign: "justify"
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                MDLabel:
+                    text: "• Contact support via the app if you encounter any issues."
+                    font_style: "Body2"
+                    font_name: "BPoppins"
+                    theme_text_color: "Custom"
+                    text_color: 1, 1, 1, 1
+                    halign: "justify"
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)

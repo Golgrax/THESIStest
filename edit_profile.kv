@@ -1,0 +1,263 @@
+<EditProfileScreen>:
+    name: "edit_profile"
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    MDFloatLayout:
+
+        MDTopAppBar:
+            title: "Edit Profile"
+            font_name: "BPoppins"
+            pos_hint: {"top": 1}
+            elevation: 0
+            md_bg_color: 250/255, 188/255, 63/255, 1
+            size_hint_y: None
+            height: dp(45)
+            
+
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'top'
+            size_hint_y: 0.5  
+            size: "800dp", "800dp"  
+            pos_hint: {"center_x": 0.5, "top": 0.9}  #Position ng Image
+
+            Image:
+                source: 'assets/profile_tab_removebg.png' 
+                size_hint_y: None
+                height: dp(170)  
+                allow_stretch: True  
+                keep_ratio: False
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            size_hint: 0.9, 0.47       #Size ng orange BoxLayout
+            pos_hint: {"center_x": 0.5, "top": 0.617}     #Position ng Box
+            padding: [20, 20]
+            spacing: 20
+            md_bg_color: (235/255, 143/255, 52/255, 1)  # Orange background
+            radius: [15]  # Rounded corners
+            elevation: 10
+
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'top'
+                size_hint_y: None
+                height: "10dp"
+
+                Image:
+                    source: "assets/user.png"
+                    size_hint: None, None
+                    size: "90dp", "90dp"
+                    allow_stretch: True
+                    keep_ratio: True
+
+            # First Name, Last Name, and Email fields
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: "220dp"  
+                spacing: 10
+
+                # First Name Box
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: "40dp"  # Adjusted height for better spacing
+                    spacing: 10
+                    padding: [15, 0, 0, 0]  #mag lagay ka ng  pading para may margin ganon!
+
+                    canvas.before:
+                        Color:
+                            rgba: (1, 1, 1, 1)  # White background
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [5]  # Rounded corners
+
+                    MDLabel:
+                        text: "First Name: "
+                        font_name: "MPoppins"
+                        font_size: "14sp"
+                        halign: "left"
+                        valign: "middle"
+                        color: (79/255, 54/255, 48/255, 1)  # Brown color
+                        size_hint_x: None
+                        width: "100dp"  # Match the width of the TextInput
+                        canvas.before:
+                            Color:
+                                rgba: (1, 1, 1, 1)  # White background
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [5]  # Rounded corners
+
+                    TextInput:
+                        id: edit_first_name_input
+                        font_name: "MPoppins"
+                        font_size: "15sp"
+                        multiline: False
+                        hint_text: "Enter first name"
+                        background_color: 1, 1, 1, 0
+                        foreground_color: 0, 0, 0, 1
+                        cursor_color: 0, 0, 0, 1
+                        size_hint_x: 0.6
+                        width: "225dp"  # ito bhie para medj malapit sa label ha, the higher, mas malapit siya teh!
+                        pos_hint: {"center_y": 0.4}  # Position ng Text Input
+
+                # Last Name Box
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: "40dp"  # Adjusted height for better spacing
+                    spacing: 10
+                    padding: [15, 0, 0, 0]
+
+                    canvas.before:
+                        Color:
+                            rgba: (1, 1, 1, 1)  # White background
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [5]  # Rounded corners
+
+                    MDLabel:
+                        text: "Last Name: "
+                        font_name: "MPoppins"
+                        font_size: "14sp"
+                        halign: "left"
+                        valign: "middle"
+                        color: (79/255, 54/255, 48/255, 1)  # Brown color
+                        size_hint_x: None
+                        width: "100dp"  # Match the width of the TextInput
+                        canvas.before:
+                            Color:
+                                rgba: (1, 1, 1, 1)  # White background
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [5]  # Rounded corners
+
+                    TextInput:
+                        id: edit_last_name_input
+                        font_name: "MPoppins"
+                        font_size: "15sp"
+                        multiline: False
+                        hint_text: "Enter last name"
+                        background_color: 1, 1, 1, 0
+                        foreground_color: 0, 0, 0, 1
+                        cursor_color: 0, 0, 0, 1
+                        size_hint_x: 0.6
+                        width: "225dp"  # Adjusted width for more compact input
+                        pos_hint: {"center_y": 0.4}  # Centered vertically within the box
+
+                # Email Box
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: "40dp"  # Adjusted height for better spacing
+                    spacing: 10
+                    padding: [15, 0, 0, 0]
+
+                    canvas.before:
+                        Color:
+                            rgba: (1, 1, 1, 1)  # White background
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [5]  # Rounded corners
+
+                    MDLabel:
+                        text: "Email: "
+                        font_name: "MPoppins"
+                        font_size: "14sp"
+                        halign: "left"
+                        background_color: 1, 1, 1, 0
+                        foreground_color: 0, 0, 0, 1
+                        cursor_color: 0, 0, 0, 1
+                        valign: "middle"
+                        color: (79/255, 54/255, 48/255, 1)  # Brown color
+                        size_hint_x: None
+                        width: "50dp"  # Match the width of the TextInput
+                        canvas.before:
+                            Color:
+                                rgba: (1, 1, 1, 1)  # White background
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [5]  # Rounded corners
+
+                    TextInput:
+                        id: edit_email_input
+                        font_name: "MPoppins"
+                        font_size: "15sp"
+                        multiline: False
+                        hint_text: "Enter email"
+                        background_color: 1, 1, 1, 0
+                        foreground_color: 0, 0, 0, 1
+                        cursor_color: 0, 0, 0, 1
+                        size_hint_x: 0.6
+                        width: "245dp"  # Adjusted width for more compact input
+                        pos_hint: {"center_y": 0.4}  # Centered vertically within the box
+
+        # Save Changes and Cancel buttons section
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: 1, None
+            height: "50dp"  # Reduced height for smaller buttons
+            padding: [20, 0, 20, 10]  # Added padding for spacing between buttons
+            pos_hint: {"center_x": 0.5, "bottom": 0.12}  # Adjusted position
+            spacing: 20  # Added spacing between the buttons
+            md_bg_color: 243/255, 233/255, 226/255, 1
+
+        AnchorLayout:
+            anchor_x: "left"
+            anchor_y: "bottom"
+            size_hint: 1, 0.5
+            padding: [10, 0, 0, 10]    # Save Changes Button
+
+            # Cancel Button
+            Button:
+                text: "Cancel"
+                size_hint: None, None
+                width: "135dp"  # Reduced width for smaller button
+                height: "45dp"
+                font_name: "BPoppins"
+                font_size: "13sp"
+                background_color: 0, 0, 0, 0
+                color: 1, 1, 1, 1  # White text
+                on_release: root.cancel_changes()
+                canvas.before:
+                    Color:
+                        rgba: (79/255, 54/255, 48/255, 1)  # Brown button background
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [10]
+        AnchorLayout:
+            anchor_x: "right"
+            anchor_y: "bottom"
+            size_hint: 1, 0.5
+            padding: [0, 0, 10, 10]
+
+            Button:
+                text: "Save Changes"
+                size_hint: None, None
+                width: "135dp"  # Reduced width for smaller button
+                height: "45dp"
+                font_name: "BPoppins"
+                font_size: "13sp"
+                background_color: 0, 0, 0, 0
+                color: 1, 1, 1, 1  # White text
+                on_press: root.save_changes()
+                canvas.before:
+                    Color:
+                        rgba: (79/255, 54/255, 48/255, 1)  # Brown button background
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [10]

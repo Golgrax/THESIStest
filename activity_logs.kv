@@ -1,0 +1,91 @@
+<ActivityLogsScreen>:
+    name: "activity_logs"
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        MDTopAppBar:
+            title: "Pet's Activity Logs"
+            font_name: "BPoppins"
+            pos_hint: {"top": 1}
+            elevation: 0
+            md_bg_color: 250/255, 188/255, 63/255, 1
+            size_hint_y: None
+            height: dp(45)
+
+        BoxLayout:
+            orientation: 'vertical'
+            padding: dp(10)
+
+            Label:
+                id: date_label
+                text: ""  # Placeholder, will be updated dynamically
+                font_name: "BPoppins"
+                font_size: '18sp'
+                size_hint_y: None
+                height: self.texture_size[1]
+                color: 79/255, 54/255, 48/255, 1  # Text color for the date
+                halign: 'center'
+
+            ScrollView:
+                BoxLayout:
+                    orientation: 'vertical'
+                    size_hint_y: None
+                    id: behavior_log_container
+                    height: self.minimum_height
+
+                    Label:
+                        id: behavior_log
+                        text: "Detected Behavior Log:\n"
+                        font_name: "MPoppins"
+                        font_size: '14sp'
+                        size_hint_y: None
+                        height: self.texture_size[1]  # Allow dynamic resizing of the label
+                        color: 79/255, 54/255, 48/255, 1  # Text color for behavior logs
+                        halign: 'left'
+                        valign: 'top'
+                        padding: [10, 10]  # Padding for readability
+
+# Bottom navigation stays outside of the scrollable area
+        MDBottomNavigation:
+            panel_color: 250/255, 177/255, 47/255, 1
+            selected_color_background: 1, 1, 1, 0  
+            text_color_active: 79/255, 54/255, 48/255, 1
+            text_color_normal: 217/255, 90/255, 26/255, 1
+            size_hint_y: 0.2
+            
+
+            MDBottomNavigationItem:
+                name: "home"
+                icon: "home"
+                text: "Home"
+                md_bg_color: 0/255, 0/255, 0/255, 0
+                on_tab_press: root.home()
+                  
+            MDBottomNavigationItem:
+                name: "activitylogs"
+                icon: "file-document"
+                text: "Activity Logs"
+                md_bg_color: 0/255, 0/255, 0/255, 0
+                on_tab_press: root.activity_logs()
+                
+            MDBottomNavigationItem:
+                name: "camera"
+                icon: "camera"
+                text: "Camera"
+                md_bg_color: 0/255, 0/255, 0/255, 0
+                on_tab_press: root.go_to_live_feed()
+
+            MDBottomNavigationItem:
+                name: "pet"
+                icon: "dog"
+                text: "Pet"
+                md_bg_color: 0/255, 0/255, 0/255, 0
+                on_tab_press: root.pet_tab()
+
+            MDBottomNavigationItem:
+                name: "profile"
+                icon: "account"
+                text: "Profile"
+                md_bg_color: 0/255, 0/255, 0/255, 0
+                on_tab_press: root.profile_tab()

@@ -1,0 +1,191 @@
+<ProfileTabScreen>:
+    name: "profile_tab"
+
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1
+    
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: 0
+        md_bg_color: 11, 1, 1, 1
+
+        MDTopAppBar:
+            title: "Profile"
+            font_name: "BPoppins"  
+            elevation: 0
+            md_bg_color: 250/255, 188/255, 63/255, 1
+            specific_text_color: 1, 1, 1, 1  
+            size_hint_y: None
+            height: dp(45)  
+
+        # Scrollable content
+        ScrollView:
+            do_scroll_x: False  
+            do_scroll_y: True  
+            md_bg_color: 1, 1, 1, 1
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height  # Adjust the height dynamically
+                padding: dp(20)
+                
+                Image:
+                    source: 'assets/profile_tab_removebg.png' 
+                    size_hint_y: None
+                    height: dp(180)  
+                    allow_stretch: True  
+                    keep_ratio: False
+
+                MDCard:
+                    size_hint_y: None
+                    height: dp(110)
+                    padding: dp(10)
+                    radius: [15]
+                    md_bg_color: 79/255, 54/255, 48/255, 1
+                    pos_hint: {"center_x": 0.5, "top": 0.9}  # Move the card upward
+                    
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(2)
+
+                        MDLabel:
+                            text: "Full Name"
+                            id: full_name_label
+                            halign: "center"
+                            font_name: "MPoppins"
+                            font_size: "19sp"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                        MDLabel:
+                            text: "Email"
+                            id: email_label
+                            halign: "center"
+                            font_size: "14sp"
+                            font_name: "MPoppins"
+                            theme_text_color: "Custom"
+                            text_color: 1, 1, 1, 1
+
+                MDCard:
+                    size_hint_y: None
+                    height: dp(240)  
+                    padding: dp(5)
+                    radius: [12]
+
+                    MDBoxLayout:
+                        orientation: 'vertical'
+                        spacing: dp(5)
+
+                        # Edit Profile Button
+                        MDFlatButton:
+                            text: "Edit Profile"
+                            font_name: "MPoppins"
+                            text_color: 79/255, 54/255, 48/255, 1  # Brown text
+                            halign: "left"
+                            size_hint_x: 1
+                            height: dp(48)
+                            on_release: app.root.current = 'edit_profile'
+
+                            canvas.before:
+                                Color:
+                                    rgba: 79/255, 54/255, 48/255, 1  # Divider color
+                                Line:
+                                    points: [self.x, self.y, self.x + self.width, self.y]
+                                    width: 1
+
+                        # FAQS Button
+                        MDFlatButton:
+                            text: "Help"
+                            font_name: "MPoppins"
+                            text_color: 79/255, 54/255, 48/255, 1  # Brown text
+                            halign: "left"
+                            size_hint_x: 1
+                            height: dp(48)
+                            on_release: app.goto_help()
+
+                            canvas.before:
+                                Color:
+                                    rgba: 79/255, 54/255, 48/255, 1  # Divider color
+                                Line:
+                                    points: [self.x, self.y, self.x + self.width, self.y]
+                                    width: 1
+
+                        # About Us Button
+                        MDFlatButton:
+                            text: "About us"
+                            font_name: "MPoppins"
+                            text_color: 79/255, 54/255, 48/255, 1  # Brown text
+                            halign: "left"
+                            size_hint_x: 1
+                            height: dp(48)
+                            on_release: app.goto_about_us()  # Navigate to the About Us screen
+
+                            canvas.before:
+                                Color:
+                                    rgba: 79/255, 54/255, 48/255, 1  # Divider color
+                                Line:
+                                    points: [self.x, self.y, self.x + self.width, self.y]
+                                    width: 1
+
+                        # Log Out Button
+                        MDFlatButton:
+                            text: "Log Out"
+                            font_name: "MPoppins"
+                            text_color: 1, 0, 0, 1  # Red color for logout
+                            halign: "left"
+                            size_hint_x: 1
+                            height: dp(48)
+                            on_release: app.show_logout_confirmation()
+
+                            canvas.before:
+                                Color:
+                                    rgba: 79/255, 54/255, 48/255, 1  # Divider color
+                                Line:
+                                    points: [self.x, self.y, self.x + self.width, self.y]
+                                    width: 1
+
+# Bottom navigation stays outside of the scrollable area
+        MDBottomNavigation:
+            panel_color: 250/255, 177/255, 47/255, 1
+            selected_color_background: 1, 1, 1, 0  
+            text_color_active: 79/255, 54/255, 48/255, 1
+            text_color_normal: 217/255, 90/255, 26/255, 1
+            size_hint_y: 0.2
+            
+
+            MDBottomNavigationItem:
+                name: "home"
+                icon: "home"
+                text: "Home"
+                md_bg_color: 1, 1, 1, 1
+                on_tab_press: root.home()
+                  
+            MDBottomNavigationItem:
+                name: "activitylogs"
+                icon: "file-document"
+                text: "Activity Logs"
+                md_bg_color: 1, 1, 1, 1
+                on_tab_press: root.activity_logs()
+                
+            MDBottomNavigationItem:
+                name: "camera"
+                icon: "camera"
+                text: "Camera"
+                md_bg_color: 1, 1, 1, 1
+                on_tab_press: root.go_to_live_feed()
+
+            MDBottomNavigationItem:
+                name: "pet"
+                icon: "dog"
+                text: "Pet"
+                md_bg_color: 1, 1, 1, 1
+                on_tab_press: root.pet_tab()
+
+            MDBottomNavigationItem:
+                name: "profile"
+                icon: "account"
+                text: "Profile"
+                md_bg_color: 1, 1, 1, 1
+                on_tab_press: root.profile_tab()

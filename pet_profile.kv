@@ -1,0 +1,243 @@
+<PetProfileScreen>:
+    name: "pet_profile"
+    canvas.before:
+        Color:
+            rgba: 243/255, 233/255, 226/255, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    MDFloatLayout:
+        # Top Bar
+        MDTopAppBar:
+            title: "Pet Profile"
+            halign: "center"
+            elevation: 0
+            pos_hint: {"top": 1}
+            md_bg_color: 250/255, 188/255, 63/255, 1
+            specific_text_color: 1, 1, 1, 1
+
+        # Add image button
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'top'
+            size_hint_y: 0.2
+            pos_hint: {"center_x": 0.5, "top": 0.85}
+
+            Image:
+                source: "assets/add_image.png"
+                size_hint: None, None
+                size: "100dp", "100dp"
+                allow_stretch: True
+                keep_ratio: True
+
+        # Profile Info section
+        GridLayout:
+            cols: 1
+            spacing: 10
+            size_hint: 0.8, 0.4
+            pos_hint: {"center_x": 0.5, "top": 0.65}
+
+            # Email Input Field
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: "40dp"
+                spacing: 5
+                canvas.before:
+                    Color:
+                        rgba: (120/255, 89/255, 66/255, 1)
+                    Line:
+                        rounded_rectangle: self.x, self.y, self.width, self.height, 5
+                        width: 1
+
+                TextInput:
+                    id: email_input
+                    hint_text: "Retype Email"
+                    font_name: "MPoppins"
+                    size_hint_x: 1
+                    multiline: False
+                    background_color: 1, 1, 1, 0
+                    foreground_color: 0, 0, 0, 1
+                    cursor_color: 0, 0, 0, 1
+                    padding: [10, 10, 10, 10]  # Adjusted padding
+                    readonly: True  # Make the email field non-editable
+
+            # Pet's Name Input Field
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: "40dp"
+                spacing: 5
+                canvas.before:
+                    Color:
+                        rgba: (120/255, 89/255, 66/255, 1)
+                    Line:
+                        rounded_rectangle: self.x, self.y, self.width, self.height, 5
+                        width: 1
+
+                TextInput:
+                    id: pet_name_input
+                    hint_text: "Pet's Name"
+                    font_name: "MPoppins"
+                    size_hint_x: 1
+                    multiline: False
+                    background_color: 1, 1, 1, 0
+                    foreground_color: 0, 0, 0, 1
+                    cursor_color: 0, 0, 0, 1
+                    padding: [10, 10, 10, 10]  # Adjusted padding
+
+            # Breed Input Field
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: "40dp"
+                spacing: 5
+                canvas.before:
+                    Color:
+                        rgba: (120/255, 89/255, 66/255, 1)
+                    Line:
+                        rounded_rectangle: self.x, self.y, self.width, self.height, 5
+                        width: 1
+
+                TextInput:
+                    id: pet_breed_input
+                    hint_text: "Breed"
+                    font_name: "MPoppins"
+                    size_hint_x: 1
+                    multiline: False
+                    background_color: 1, 1, 1, 0
+                    foreground_color: 0, 0, 0, 1
+                    cursor_color: 0, 0, 0, 1
+                    padding: [10, 10, 10, 10]  # Adjusted padding
+
+            # Gender Selection with Checkboxes
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: "40dp"
+                spacing: 10
+
+                MDLabel:
+                    text: "Sex:"
+                    size_hint_x: 0.3
+                    halign: "left"
+                    valign: "center"
+
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_x: 0.7
+                    spacing: 5
+
+                    MDCheckbox:
+                        id: male_checkbox
+                        size_hint: None, None
+                        size: "30dp", "30dp"
+                        on_active: root.set_gender("Male") if self.active else None
+
+                    MDLabel:
+                        text: "Male"
+                        size_hint_x: None
+                        width: "70dp"
+                        halign: "left"
+                        valign: "center"
+
+                    MDCheckbox:
+                        id: female_checkbox
+                        size_hint: None, None
+                        size: "30dp", "30dp"
+                        on_active: root.set_gender("Female") if self.active else None
+
+                    MDLabel:
+                        text: "Female"
+                        size_hint_x: None
+                        width: "70dp"
+                        halign: "left"
+                        valign: "center"
+
+            # Age Input and Age Unit Dropdown in a single row
+            BoxLayout:
+                orientation: 'horizontal'
+                size_hint_y: None
+                height: "40dp"
+                spacing: 10
+
+                # Age Input Field
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_x: 0.6
+                    spacing: 5
+                    canvas.before:
+                        Color:
+                            rgba: (120/255, 89/255, 66/255, 1)
+                        Line:
+                            rounded_rectangle: self.x, self.y, self.width, self.height, 5
+                            width: 1
+
+                    TextInput:
+                        id: pet_age_input
+                        hint_text: "Age"
+                        font_name: "MPoppins"
+                        input_filter: "int"
+                        size_hint_x: 1
+                        multiline: False
+                        background_color: 1, 1, 1, 0
+                        foreground_color: 0, 0, 0, 1
+                        cursor_color: 0, 0, 0, 1
+                        padding: [10, 10, 10, 10]  # Adjusted padding
+
+                # Age Unit Dropdown Button
+                MDRaisedButton:
+                    id: age_unit_dropdown
+                    text: "Select Unit"
+                    size_hint_x: 0.4
+                    on_release: root.open_age_unit_menu()
+                    md_bg_color: 0.31, 0.21, 0.18, 1
+
+        # Save button section
+        AnchorLayout:
+            anchor_x: "right"
+            anchor_y: "bottom"
+            size_hint: 1, 0.5
+            padding: [0, 0, 10, 10]
+            Button:
+                text: "Save"
+                size_hint: 0.3, None
+                height: "50dp"
+                font_name: "BPoppins"
+                font_size: "16sp"
+                background_color: 0, 0, 0, 0
+                color: 1, 1, 1, 1
+                on_release: root.save_pet_profile()
+                canvas.before:
+                    Color:
+                        rgba: 0.31, 0.21, 0.18, 1
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [10]
+
+        # Navigation buttons
+        AnchorLayout:
+            anchor_x: "left"
+            anchor_y: "bottom"
+            size_hint: 1, 0.5
+            padding: [10, 0, 0, 10]
+
+            Button:
+                text: "Back"
+                size_hint: 0.35, None
+                height: "50dp"
+                font_name: "BPoppins"
+                font_size: "16sp"
+                background_color: 0, 0, 0, 0
+                color: 1, 1, 1, 1
+                on_release: app.prev_step()
+                canvas.before:
+                    Color:
+                        rgba: 0.31, 0.21, 0.18, 1
+                    RoundedRectangle:
+                        size: self.size
+                        pos: self.pos
+                        radius: [10]
+        

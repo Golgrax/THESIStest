@@ -1,0 +1,238 @@
+<SignupScreen>:
+    name: "signup"
+    canvas.before:
+        Color:
+            rgba: (255, 255, 255, 255)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    MDFloatLayout:
+        # Background Image
+        Image:
+            source: "assets/signup.png"
+            allow_stretch: True
+            keep_ratio: False
+            size_hint: 1, 1
+            pos_hint: {"center_x": .5, "center_y": .98}
+
+        MDIconButton:
+            icon: "arrow-left"
+            pos_hint: {"center_y": .95}
+            user_font_size: "30sp"
+            theme_text_color: "Custom"
+            text_color: (26/255, 24/255, 56/255, 255/255)
+            on_release:
+                root.manager.transition.direction = "right"
+                root.manager.current = "login"
+
+        MDLabel:
+            text: "Create an Account"
+            font_name: "BPoppins"
+            font_size: "26sp"
+            pos_hint: {"center_x": .6, "center_y": .60}
+            color: (79/255, 54/255, 48/255, 1)
+
+        MDLabel:
+            text: "Sign up to get started"
+            font_name: "MPoppins"
+            font_size: "18sp"
+            pos_hint: {"center_x": .6, "center_y": .55}
+            color: (135/255, 80/255, 18/255, 1)
+
+        # First Name and Last Name in One Row
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: .8, .1
+            pos_hint: {"center_x": .5, "center_y": .45}
+            spacing: dp(10)
+
+            # First Name Input with Icon
+            MDFloatLayout:
+                size_hint_x: .48
+
+                MDIcon:
+                    icon: "account"
+                    pos_hint: {"x": 0.02, "center_y": 0.5}
+                    size_hint: None, None
+                    size: dp(24), dp(24)
+                    theme_text_color: "Custom"
+                    text_color: (235/255, 143/255, 52/255, 1)
+
+                TextInput:
+                    id: first_name
+                    hint_text: "First Name"
+                    font_name: "MPoppins"
+                    size_hint_y: .7
+                    pos_hint: {"center_x": .5, "center_y": 0.5}
+                    background_color: 1, 1, 1, 0
+                    foreground_color: (0, 0, 0, 1)
+                    cursor_color: (0, 0, 0, 1)
+                    font_size: "14sp"
+                    cursor_width: "2sp"
+                    multiline: False
+                    padding_x: dp(40)
+                    padding_y: dp(10)
+                    canvas.before:
+                        Color:
+                            rgba: (120/255, 89/255, 66/255, 1)
+                        Line:
+                            width: 1
+                            rounded_rectangle: self.x, self.y, self.width, self.height, 7
+
+            # Last Name Input with Icon
+            MDFloatLayout:
+                size_hint_x: .48
+
+                MDIcon:
+                    icon: "account"
+                    pos_hint: {"x": 0.02, "center_y": 0.5}
+                    size_hint: None, None
+                    size: dp(24), dp(24)
+                    theme_text_color: "Custom"
+                    text_color: (235/255, 143/255, 52/255, 1)
+
+                TextInput:
+                    id: last_name
+                    hint_text: "Last Name"
+                    font_name: "MPoppins"
+                    size_hint_y: .7
+                    pos_hint: {"center_x": .5, "center_y": 0.5}
+                    background_color: 1, 1, 1, 0
+                    foreground_color: (0, 0, 0, 1)
+                    cursor_color: (0, 0, 0, 1)
+                    font_size: "14sp"
+                    cursor_width: "2sp"
+                    multiline: False
+                    padding_x: dp(40)
+                    padding_y: dp(10)
+                    canvas.before:
+                        Color:
+                            rgba: (120/255, 89/255, 66/255, 1)
+                        Line:
+                            width: 1
+                            rounded_rectangle: self.x, self.y, self.width, self.height, 7
+
+        # Email Input with Icon
+        MDFloatLayout:
+            size_hint: .8, .1
+            pos_hint: {"center_x": .5, "center_y": .35}
+
+            MDIcon:
+                icon: "email"
+                pos_hint: {"x": 0.02, "center_y": 0.5}
+                size_hint: None, None
+                size: dp(24), dp(24)
+                theme_text_color: "Custom"
+                text_color: (235/255, 143/255, 52/255, 1)
+
+            TextInput:
+                id: email
+                hint_text: "Email"
+                font_name: "MPoppins"
+                size_hint_y: .7
+                pos_hint: {"center_x": .5, "center_y": 0.5}
+                background_color: 1, 1, 1, 0
+                foreground_color: (0, 0, 0, 1)
+                cursor_color: (0, 0, 0, 1)
+                font_size: "14sp"
+                cursor_width: "2sp"
+                multiline: False
+                padding_x: dp(40)
+                padding_y: dp(10)
+                canvas.before:
+                    Color:
+                        rgba: (120/255, 89/255, 66/255, 1)
+                    Line:
+                        width: 1
+                        rounded_rectangle: self.x, self.y, self.width, self.height, 7
+
+        # Password Input with Icon
+        MDFloatLayout:
+            size_hint: .8, .1
+            pos_hint: {"center_x": .5, "center_y": .25}
+
+            MDIcon:
+                icon: "lock"
+                pos_hint: {"x": 0.02, "center_y": 0.5}
+                size_hint: None, None
+                size: dp(24), dp(24)
+                theme_text_color: "Custom"
+                text_color: (235/255, 143/255, 52/255, 1)
+
+            TextInput:
+                id: password
+                hint_text: "Password (at least 8 characters)"
+                font_name: "MPoppins"
+                size_hint_y: .7
+                pos_hint: {"center_x": .5, "center_y": 0.5}
+                background_color: 1, 1, 1, 0
+                foreground_color: (0, 0, 0, 1)
+                cursor_color: (0, 0, 0, 1)
+                font_size: "14sp"
+                cursor_width: "2sp"
+                multiline: False
+                password: True
+                padding_x: dp(40)
+                padding_y: dp(10)
+                canvas.before:
+                    Color:
+                        rgba: (120/255, 89/255, 66/255, 1)
+                    Line:
+                        width: 1
+                        rounded_rectangle: self.x, self.y, self.width, self.height, 5
+
+            MDIconButton:
+                id: toggle_password
+                icon: "eye-off"
+                pos_hint: {"x": .88, "center_y": 0.5}
+                size_hint: None, None
+                size: dp(24), dp(24)
+                size_hint_x: 0.1
+                theme_text_color: "Custom"
+                text_color: (235/255, 143/255, 52/255, 1)
+                on_release:
+                    password.password = not password.password
+                    self.icon = "eye" if self.icon == "eye-off" else "eye-off"
+
+        MDLabel:
+            id: label_error
+            text: ""
+            font_name: "BPoppins"
+            font_size: "12sp"
+            height: self.texture_size[1]
+            pos_hint: {"center_x": .6, "center_y": .15}
+            color: rgba(255, 0, 0, 255)
+
+        Button:
+            text: "SIGN UP"
+            size_hint: .66, .065
+            pos_hint: {"center_x": .5, "center_y": .10}
+            background_color: 0, 0, 0, 0
+            font_name: "BPoppins"
+            on_release:
+                root.signup(first_name.text, last_name.text, email.text, password.text)
+            canvas.before:
+                Color:
+                    rgba: (79/255, 54/255, 48/255, 1)
+                RoundedRectangle:
+                    size: self.size
+                    pos: self.pos
+                    radius: [5]
+
+        MDLabel:
+            text: "Already have an account?"
+            font_name: "BPoppins"
+            font_size: "13sp"
+            pos_hint: {"center_x": .68, "center_y": .05}
+            color: (120/255, 89/255, 66/255, 1)
+
+        MDTextButton:
+            text: "Login"
+            font_name: "BPoppins"
+            font_size: "13sp"
+            pos_hint: {"center_x": .75, "center_y": .05}
+            color: (120/255, 89/255, 66/255, 1)
+            on_release:
+                root.manager.transition.direction = "right"
+                root.manager.current = "login"

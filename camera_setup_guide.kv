@@ -1,0 +1,167 @@
+<CameraSetupGuideScreen>:
+    name: "camera_setup_guide"
+
+    BoxLayout:
+        orientation: 'vertical'
+
+        # Header Bar
+        BoxLayout:
+            size_hint_y: 0.1
+            orientation: 'horizontal'
+            padding: dp(10)
+            spacing: dp(10)
+            canvas.before:
+                Color:
+                    rgba: 1, 0.6, 0, 1  # Header background color
+                Rectangle:
+                    pos: self.pos
+                    size: self.size
+
+            Button:
+                text: "<"
+                size_hint_x: 0.1
+                background_normal: ''
+                background_color: 0.8, 0.4, 0, 1
+                color: 1, 1, 1, 1
+                on_release: app.root.current = "help_screen"  # Return to the Help Screen
+
+            Label:
+                text: "Camera Setup Guide"
+                font_size: '20sp'
+                bold: True
+                color: 1, 1, 1, 1
+                halign: 'center'
+                valign: 'middle'
+                size_hint_x: 0.9
+
+        # Content Area
+        ScrollView:
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: self.minimum_height
+                padding: dp(10)
+                spacing: dp(10)
+
+                Label:
+                    text: "Welcome to the PetWatch Camera Setup Guide!"
+                    font_size: '18sp'
+                    bold: True
+                    halign: 'center'
+                    valign: 'middle'
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                Label:
+                    text: "This guide will walk you through the steps to set up and configure your PetWatch camera."
+                    font_size: '16sp'
+                    halign: 'left'
+                    valign: 'top'
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                # Step 1
+                Label:
+                    text: "1. Power on the Camera"
+                    font_size: '16sp'
+                    bold: True
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+                    color: 0.5, 0.3, 0.1, 1
+
+                Label:
+                    text: "Connect your PetWatch camera to a power source using the provided power adapter. Ensure the camera is powered on and the status light is blinking."
+                    font_size: '14sp'
+                    halign: 'left'
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                # Step 2
+                Label:
+                    text: "2. Connect Camera to Wi-Fi"
+                    font_size: '16sp'
+                    bold: True
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+                    color: 0.5, 0.3, 0.1, 1
+
+                Label:
+                    text: "Open the PetWatch mobile app and navigate to the 'Camera' tab. Tap on 'Add Camera' and follow the on-screen instructions to connect your camera to a Wi-Fi network."
+                    font_size: '14sp'
+                    halign: 'left'
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                # Step 3
+                Label:
+                    text: "3. Position Your Camera"
+                    font_size: '16sp'
+                    bold: True
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+                    color: 0.5, 0.3, 0.1, 1
+
+                Label:
+                    text: "Place the camera in a suitable location with a clear view of your pet. Ensure the camera is within the Wi-Fi range."
+                    font_size: '14sp'
+                    halign: 'left'
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                # Step 4
+                Label:
+                    text: "4. Test the Camera Feed"
+                    font_size: '16sp'
+                    bold: True
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+                    color: 0.5, 0.3, 0.1, 1
+
+                Label:
+                    text: "Once the camera is positioned, go back to the PetWatch app, tap on 'Live Feed', and check the video stream. Adjust the angle if needed."
+                    font_size: '14sp'
+                    halign: 'left'
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                # Step 5
+                Label:
+                    text: "5. Customize Camera Settings"
+                    font_size: '16sp'
+                    bold: True
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+                    color: 0.5, 0.3, 0.1, 1
+
+                Label:
+                    text: "In the settings section of the camera, adjust parameters like motion detection sensitivity, alert settings, and video quality."
+                    font_size: '14sp'
+                    halign: 'left'
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                # Step 6
+                Label:
+                    text: "6. Troubleshooting"
+                    font_size: '16sp'
+                    bold: True
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+                    color: 0.5, 0.3, 0.1, 1
+
+                Label:
+                    text: "If you face any issues with camera connectivity, check the Wi-Fi signal strength, ensure the camera is powered, and restart both the camera and the app."
+                    font_size: '14sp'
+                    halign: 'left'
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(10)
+
+                # Contact Us Button
+                Button:
+                    text: "Contact Us"
+                    size_hint_y: None
+                    height: dp(50)
+                    background_normal: ''
+                    background_color: 1, 0.6, 0, 1
+                    color: 1, 1, 1, 1
+                    on_release: app.show_contact_support()

@@ -1,0 +1,253 @@
+<AboutUsScreen>:
+    name: "about_us"
+
+    # Background color for the entire screen
+    canvas.before:
+        Color:
+            rgba: 251/255, 227/255, 187/255, 1 # chnage color
+
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: 0
+
+        # Top App Bar with back button at the top of the screen
+        MDTopAppBar:
+            title: "About Us"
+            font_name: "BPoppins"  # Custom font for the title
+            left_action_items: [["arrow-left", lambda x: app.cancel_changes()]]  # Back button
+            elevation: 0
+            md_bg_color: 250/255, 188/255, 63/255, 1
+            specific_text_color: 1, 1, 1, 1  # White text color
+            size_hint_y: None
+            height: dp(45)  # Height of the top bar
+
+        # Scrollable content
+        ScrollView:
+            do_scroll_x: False  # Disable horizontal scrolling
+            do_scroll_y: True   # Enable vertical scrolling
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(20)
+                spacing: dp(10)  # Reduced spacing for compactness
+                size_hint_y: None
+                height: self.minimum_height  # Adapt height to children
+
+                # Illustration or image below the top bar
+                Image:
+                    source: 'assets/aboutus.png'  # Path to the illustration image
+                    size_hint_y: None
+                    height: dp(200)  # Increased size for visual appeal
+                    allow_stretch: False
+                    keep_ratio: False  # Ensure the image maintains proportions
+
+                # About Us Title
+                MDLabel:
+                    text: "PetWatch"
+                    font_size: "28sp"
+                    halign: "center"
+                    font_name: "BPoppins"
+                    bold: True
+                    theme_text_color: "Custom"
+                    text_color: 79/255, 54/255, 48/255, 1  # Warm Brown
+                    size_hint_y: None
+                    height: dp(50)
+
+                # About Us Description
+                MDLabel:
+                    text:"Petwatch is your trusted companion for monitoring "   
+                    font_size: "16sp"
+                    halign: "center"
+                    valign: "middle"
+                    font_name: "MPoppins"
+                    text_size: self.width - dp(40), None  # Ensure text fits within margins
+                    theme_text_color: "Custom"
+                    text_color: 0, 0, 0, 0.8  # Transparent black for readability
+                    size_hint_y: None
+                    height: self.texture_size[1] + dp(20)
+
+                # Decorative Divider Line
+                MDSeparator:
+                    height: dp(1)
+                    color: 79/255, 54/255, 48/255, 1  # Warm Brown
+                    size_hint_y: None
+
+                # Additional Details Section
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(10)
+                    size_hint_y: None
+                    height: self.minimum_height
+
+                    # Vision
+                    MDLabel:
+                        text: "Our Vision"
+                        font_size: "20sp"
+                        halign: "left"
+                        font_name: "BPoppins"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 79/255, 54/255, 48/255, 1
+                        size_hint_y: None
+                        height: dp(30)
+
+                    MDLabel:
+                        text: "To create a world where pet owners and their pets share an unbreakable connection, regardless of distance."
+                        font_size: "14sp"
+                        halign: "left"
+                        font_name: "MPoppins"
+                        text_size: self.width - dp(40), None
+                        theme_text_color: "Custom"
+                        text_color: 0, 0, 0, 0.8
+                        size_hint_y: None
+                        height: self.texture_size[1] + dp(10)
+
+                    # Mission
+                    MDLabel:
+                        text: "Our Mission"
+                        font_size: "20sp"
+                        halign: "left"
+                        font_name: "BPoppins"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 79/255, 54/255, 48/255, 1
+                        size_hint_y: None
+                        height: dp(30)
+
+                    MDLabel:
+                        text: "To innovate and deliver reliable pet monitoring solutions that enhance pet care and owner satisfaction."
+                        font_size: "14sp"
+                        halign: "left"
+                        font_name: "MPoppins"
+                        text_size: self.width - dp(40), None
+                        theme_text_color: "Custom"
+                        text_color: 0, 0, 0, 0.8
+                        size_hint_y: None
+                        height: self.texture_size[1] + dp(10)
+
+                
+                               
+                # Spacer at the bottom
+                Widget:
+                    size_hint_y: None
+                    height: dp(20)  # Adds some breathing room
+                
+                                # Technology Used Section
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(10)
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: dp(20)
+
+                    MDLabel:
+                        text: "Technology Used"
+                        font_size: "20sp"
+                        halign: "center"
+                        font_name: "BPoppins"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 79/255, 54/255, 48/255, 1
+                        size_hint_y: None
+                        height: dp(30)
+
+                    Image:
+                        source: 'assets/technology.png'  # Replace with your image path
+                        size_hint_y: None
+                        height: dp(180)
+                        allow_stretch: True
+                        keep_ratio: True
+
+                    MDLabel:
+                        text: "We leverage cutting-edge technology, including camera monitoring and AI algorithms, to provide real-time pet monitoring solutions."
+                        font_size: "14sp"
+                        halign: "center"
+                        font_name: "MPoppins"
+                        text_size: self.width - dp(40), None
+                        theme_text_color: "Custom"
+                        text_color: 0, 0, 0, 0.8
+                        size_hint_y: None
+                        height: self.texture_size[1] + dp(10)
+
+                # Background Section
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(10)
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: dp(20)
+
+                    MDLabel:
+                        text: "Background"
+                        font_size: "20sp"
+                        halign: "center"
+                        font_name: "BPoppins"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 79/255, 54/255, 48/255, 1
+                        size_hint_y: None
+                        height: dp(30)
+
+                    Image:
+                        source: 'assets/background.png'  # Replace with your image path
+                        size_hint_y: None
+                        height: dp(180)
+                        allow_stretch: True
+                        keep_ratio: True
+
+                    MDLabel:
+                        text: "Founded in 2022, PetWatch started as a passion project to enhance the safety and well-being of pets globally. Today, it’s a trusted solution for thousands of pet owners."
+                        font_size: "14sp"
+                        halign: "center"
+                        font_name: "MPoppins"
+                        text_size: self.width - dp(40), None
+                        theme_text_color: "Custom"
+                        text_color: 0, 0, 0, 0.8
+                        size_hint_y: None
+                        height: self.texture_size[1] + dp(10)
+
+                # Our Team Section
+                MDBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(10)
+                    size_hint_y: None
+                    height: self.minimum_height
+                    padding: dp(20)
+
+                    MDLabel:
+                        text: "Our Team"
+                        font_size: "20sp"
+                        halign: "center"
+                        font_name: "BPoppins"
+                        bold: True
+                        theme_text_color: "Custom"
+                        text_color: 79/255, 54/255, 48/255, 1
+                        size_hint_y: None
+                        height: dp(30)
+
+                    Image:
+                        source: 'assets/team.png'  # Replace with your image path
+                        size_hint_y: None
+                        height: dp(180)
+                        allow_stretch: True
+                        keep_ratio: True
+
+                    MDLabel:
+                        text: "Our dedicated team of pet lovers, tech enthusiasts, and industry experts ensures PetWatch remains reliable and innovative for all pet owners."
+                        font_size: "14sp"
+                        halign: "center"
+                        font_name: "MPoppins"
+                        text_size: self.width - dp(40), None
+                        theme_text_color: "Custom"
+                        text_color: 0, 0, 0, 0.8
+                        size_hint_y: None
+                        height: self.texture_size[1] + dp(10)
+
+                # Final Spacer at the Bottom
+                Widget:
+                    size_hint_y: None
+                    height: dp(20)  # Adds extra breathing room at the bottom

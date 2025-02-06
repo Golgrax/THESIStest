@@ -1,0 +1,243 @@
+<ProfileScreen>:
+    name: "profile"
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1  # White background
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    MDFloatLayout:
+
+        AnchorLayout:
+            anchor_x: 'center'
+            anchor_y: 'top'
+            size_hint_y: 0.5  
+            size: "900dp", "900dp"  
+            pos_hint: {"center_x": 0.5, "top": 0.9}  # Position of the image
+
+            Image:
+                source: 'assets/profile_tab_removebg.png' 
+                size_hint_y: None
+                height: dp(170)  
+                allow_stretch: True  
+                keep_ratio: False
+
+        MDBoxLayout:
+            orientation: 'vertical'
+            size_hint: 0.9, 0.47  # Size of the orange BoxLayout
+            pos_hint: {"center_x": 0.5, "top": 0.617}  # Position of the box
+            padding: [20, 20]
+            spacing: 20
+            md_bg_color: (235/255, 143/255, 52/255, 1)  # Orange background
+            radius: [15]  # Rounded corners
+            elevation: 10
+
+            AnchorLayout:
+                anchor_x: 'center'
+                anchor_y: 'top'
+                size_hint_y: None
+                height: "10dp"
+
+                Image:
+                    source: "assets/user.png"
+                    size_hint: None, None
+                    size: "90dp", "90dp"
+                    allow_stretch: True
+                    keep_ratio: True
+
+            # First Name, Last Name, and Email fields
+            BoxLayout:
+                orientation: 'vertical'
+                size_hint_y: None
+                height: "220dp"  
+                spacing: 10
+
+                # First Name Box
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: "40dp"  # Adjusted height for better spacing
+                    spacing: 2  # Further reduced spacing between labels
+                    padding: [5, 0, 5, 0]  # Reduced padding for closer alignment
+
+                    canvas.before:
+                        Color:
+                            rgba: (1, 1, 1, 1)  # White background
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [5]  # Rounded corners
+
+                    MDLabel:
+                        text: "First Name: "
+                        font_name: "MPoppins"
+                        font_size: "14sp"
+                        halign: "left"
+                        valign: "middle"
+                        padding_x: dp(5)
+                        color: (0, 0, 0, 1)  # Brown color
+                        size_hint_x: None
+                        width: "100dp"  # Fixed width for the label
+                        canvas.before:
+                            Color:
+                                rgba: (1, 1, 1, 1)  # White background
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [5]  # Rounded corners
+
+                    TextInput:
+                        id: first_name_label
+                        text: ""
+                        font_name: "MPoppins"
+                        font_size: "14sp"
+                        halign: "left"
+                        valign: "middle"
+                        color: (79/255, 54/255, 48/255, 1)  # Brown color
+                        size_hint_x: 0.6  # Responsive width
+                        width: "200dp"  # Fixed width for the label
+                        readonly: True
+                        pos_hint: {"center_y": 0.4}  # Position ng Text Input
+                        background_color: 1, 1, 1, 0
+                        foreground_color: 0, 0, 0, 1
+                        multiline: False
+                        
+
+
+                # Last Name Box
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: "40dp"  # Adjusted height for better spacing
+                    spacing: 2  # Further reduced spacing between labels
+                    padding: [5, 0, 5, 0]  # Reduced padding for closer alignment
+
+                    canvas.before:
+                        Color:
+                            rgba: (1, 1, 1, 1)  # White background
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [5]  # Rounded corners
+
+                    MDLabel:
+                        text: "Last Name: "
+                        font_name: "MPoppins"
+                        font_size: "14sp"
+                        halign: "left"
+                        valign: "middle"
+                        padding_x: dp(5)
+                        color: (0, 0, 0, 1)  # Brown color
+                        size_hint_x: None
+                        width: "100dp"  # Fixed width for the label
+                        canvas.before:
+                            Color:
+                                rgba: (1, 1, 1, 1)  # White background
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [5]  # Rounded corners
+
+                    TextInput:
+                        id: last_name_label
+                        text: ""
+                        font_name: "MPoppins"
+                        font_size: "14sp"
+                        halign: "left"
+                        valign: "middle"
+                        color: (79/255, 54/255, 48/255, 1)  # Brown color
+                        size_hint_x: 0.6  # Responsive width
+                        width: "200dp"  # Fixed width for the label
+                        readonly: True
+                        pos_hint: {"center_y": 0.4}  # Position ng Text Input
+                        background_color: 1, 1, 1, 0
+                        foreground_color: 0, 0, 0, 1
+                        multiline: False
+                        
+
+                # Email Box
+                BoxLayout:
+                    orientation: 'horizontal'
+                    size_hint_y: None
+                    height: "40dp"  # Adjusted height for better spacing
+                    spacing: 2  # Further reduced spacing between labels
+                    padding: [5, 0, 5, 0]  # Reduced padding for closer alignment
+
+                    canvas.before:
+                        Color:
+                            rgba: (1, 1, 1, 1)  # White background
+                        RoundedRectangle:
+                            pos: self.pos
+                            size: self.size
+                            radius: [5]  # Rounded corners
+
+                    MDLabel:
+                        text: "Email: "
+                        font_name: "MPoppins"
+                        font_size: "14sp"
+                        halign: "left"
+                        valign: "middle"
+                        padding_x: dp(5)
+                        color: (0, 0, 0, 1)  # Brown color
+                        size_hint_x: None
+                        width: "100dp"  # Fixed width for the label
+                        canvas.before:
+                            Color:
+                                rgba: (1, 1, 1, 1)  # White background
+                            RoundedRectangle:
+                                pos: self.pos
+                                size: self.size
+                                radius: [5]  # Rounded corners
+
+                    TextInput:
+                        id: email_label
+                        text: ""
+                        font_name: "MPoppins"
+                        font_size: "14sp"
+                        halign: "left"
+                        valign: "middle"
+                        color: (79/255, 54/255, 48/255, 1)  # Brown color
+                        size_hint_x: 0.6  # Responsive width
+                        width: "200dp"  # Fixed width for the label
+                        readonly: True
+                        pos_hint: {"center_y": 0.4}  # Position ng Text Input
+                        background_color: 1, 1, 1, 0
+                        foreground_color: 0, 0, 0, 1
+                        multiline: False
+                        
+                        
+
+        # Next button section
+        BoxLayout:
+            orientation: 'horizontal'
+            size_hint: 1, None
+            height: "50dp"  # Reduced height for smaller buttons
+            padding: [20, 0, 20, 10]  # Added padding for spacing between buttons
+            pos_hint: {"center_x": 0.5, "bottom": 0.12}  # Adjusted position
+            spacing: 20  # Added spacing between the buttons
+            md_bg_color: 243/255, 233/255, 226/255, 1
+
+            AnchorLayout:
+                anchor_x: "right"
+                anchor_y: "bottom"
+                size_hint: 1, 0.5
+                padding: [0, 0, 10, 10]  # Next Button
+
+                Button:
+                    text: "Next"
+                    size_hint: None, None
+                    width: "135dp"  # Reduced width for smaller button
+                    height: "50dp"
+                    font_name: "BPoppins"
+                    font_size: "16sp"
+                    background_color: 0, 0, 0, 0
+                    color: 1, 1, 1, 1  # White text
+                    on_release: app.next_step()
+                    canvas.before:
+                        Color:
+                            rgba: (79/255, 54/255, 48/255, 1)  # Brown button background
+                        RoundedRectangle:
+                            size: self.size
+                            pos: self.pos
+                            radius: [10]

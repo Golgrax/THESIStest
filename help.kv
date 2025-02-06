@@ -1,0 +1,213 @@
+<HelpScreen>:
+    name: "help_button"
+
+    # Background color for the entire screen
+    canvas.before:
+        Color:
+            rgba: 251/255, 227/255, 187/255, 1 # chnage color
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+    MDBoxLayout:
+        orientation: 'vertical'
+        spacing: 0
+
+        # Top App Bar with back button at the top of the screen
+        MDTopAppBar:
+            title: "Help"
+            font_name: "BPoppins"  # Custom font for the title
+            left_action_items: [["arrow-left", lambda x: app.cancel_changes()]]  # Back button
+            elevation: 0
+            md_bg_color: 250/255, 188/255, 63/255, 1
+            specific_text_color: 1, 1, 1, 1  # White text color
+            size_hint_y: None
+            height: dp(45)  # Height of the top bar
+
+        # Scrollable content
+        ScrollView:
+            do_scroll_x: False  # Disable horizontal scrolling
+            do_scroll_y: True   # Enable vertical scrolling
+
+            MDBoxLayout:
+                orientation: 'vertical'
+                padding: dp(10)
+                spacing: dp(10)  # Reduced spacing for compactness
+                size_hint_y: None
+                height: self.minimum_height  # Adapt height to children
+
+                # Category Header
+                MDLabel:
+                    text: "Browse Help Topics"
+                    font_name: "BPoppins"
+                    font_size: "16sp"
+                    halign: "center"
+                    theme_text_color: "Custom"
+                    text_color: 0, 0, 0, 1
+                    bold: True
+                    size_hint_y: None
+                    height: dp(40)
+                    
+
+                # Help Topics (Category Cards)
+                MDBoxLayout:
+                    orientation: "vertical"
+                    spacing: dp(10)
+                    adaptive_height: True
+                    size_hint_y: None
+                    height: self.minimum_height
+                    id: topics_list
+                    # Centering the cards horizontally
+                    center_x: self.parent.center_x
+
+                    # User Manual Card
+                    MDCard:
+                        size_hint: None, None
+                        size: "340dp", "70dp"  # Reduced card size for mobile
+                        size_hint_x: 0.9
+                        pos_hint: {"center_x": 0.5}
+                        radius: [12,]
+                        elevation: 0  # Removed the shadow
+                        md_bg_color: 79/255, 54/255, 48/255, 1  # Brown color
+                        on_release: app.root.current = "userguide"
+
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            padding: dp(15)
+                            spacing: dp(10)
+
+                            MDIcon:
+                                icon: "book-open-page-variant"  # Icon for the User Manual
+                                theme_text_color: "Custom"
+                                text_color: 1, 1, 1, 1
+                                size: (dp(20), dp(20))  # Set size as tuple
+                                pos_hint: {"center_y": 0.5}  # Center icon vertically
+
+                            MDLabel:
+                                text: "User Guide"
+                                font_name: "BPoppins"
+                                theme_text_color: "Custom"
+                                text_color: 1, 1, 1, 1
+                                bold: True
+                                font_size: "14sp"  # Smaller text size for mobile
+                                valign: "middle"  # Align text vertically in the middle
+                                halign: "left"
+
+                    # Additional Help Cards
+                    MDCard:
+                        size_hint: None, None
+                        pos_hint: {"center_x": 0.5}
+                        size_hint_x: 0.9
+                        size: "340dp", "70dp"  # Reduced card size for mobile
+                        radius: [12,]
+                        elevation: 0  # Removed the shadow
+                        md_bg_color: 79/255, 54/255, 48/255, 1  # Brown color
+                        on_release: app.root.current = "faqs" 
+
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            padding: dp(15)
+                            spacing: dp(10)
+
+                            MDIcon:
+                                icon: "help-circle"  # Icon for FAQ
+                                theme_text_color: "Custom"
+                                text_color: 1, 1, 1, 1
+                                size: (dp(20), dp(20))  # Set size as tuple
+                                pos_hint: {"center_y": 0.5}  # Center icon vertically
+
+                            MDLabel:
+                                text: "FAQs"
+                                font_name: "BPoppins"
+                                theme_text_color: "Custom"
+                                text_color: 1, 1, 1, 1
+                                bold: True
+                                font_size: "14sp"  # Smaller text size for mobile
+                                valign: "middle"  # Align text vertically in the middle
+                                halign: "left"
+
+                    MDCard:
+                        size_hint: None, None
+                        size_hint_x: 0.9
+                        pos_hint: {"center_x": 0.5}
+                        size: "340dp", "70dp"  # Reduced card size for mobile
+                        radius: [12,]
+                        elevation: 0  # Removed the shadow
+                        md_bg_color: 79/255, 54/255, 48/255, 1  # Brown color
+                        on_release: app.root.current = "faqs"  # Navigate to FAQScreen
+
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            padding: dp(15)
+                            spacing: dp(10)
+
+                            MDIcon:
+                                icon: "cellphone"  # Changed Icon for Mobile Application
+                                theme_text_color: "Custom"
+                                text_color: 1, 1, 1, 1
+                                size: (dp(20), dp(20))  # Set size as tuple
+                                pos_hint: {"center_y": 0.5}  # Center icon vertically
+
+                            MDLabel:
+                                text: "Behavior Analysis"
+                                font_name: "BPoppins"
+                                theme_text_color: "Custom"
+                                text_color: 1, 1, 1, 1
+                                bold: True
+                                font_size: "14sp"  # Smaller text size for mobile
+                                valign: "middle"  # Align text vertically in the middle
+                                halign: "left"
+
+                    MDCard:
+                        size_hint: None, None
+                        size_hint_x: 0.9
+                        pos_hint: {"center_x": 0.5}
+                        size: "340dp", "70dp"  # Reduced card size for mobile
+                        radius: [12,]
+                        elevation: 0  # Removed the shadow
+                        md_bg_color: 79/255, 54/255, 48/255, 1  # Brown color
+                        on_release: app.show_help_topic('camera')
+
+                        BoxLayout:
+                            orientation: 'horizontal'
+                            padding: dp(15)
+                            spacing: dp(10)
+
+                            MDIcon:
+                                icon: "camera"  # Icon for Camera
+                                theme_text_color: "Custom"
+                                text_color: 1, 1, 1, 1
+                                size: (dp(20), dp(20))  # Set size as tuple
+                                pos_hint: {"center_y": 0.5}  # Center icon vertically
+
+                            MDLabel:
+                                text: "Camera"
+                                font_name: "BPoppins"
+                                theme_text_color: "Custom"
+                                text_color: 1, 1, 1, 1
+                                bold: True
+                                font_size: "14sp"  # Smaller text size for mobile
+                                valign: "middle"  # Align text vertically in the middle
+                                halign: "left"
+                
+                # Footer with Contact Info
+                MDLabel:
+                    text: "Need further assistance? Reach out to us anytime!"
+                    font_name: "BPoppins"
+                    font_size: "12sp"  # Smaller font size for mobile
+                    halign: "center"
+                    theme_text_color: "Custom"
+                    text_color: 0.2, 0.2, 0.2, 1
+                    size_hint_y: None
+                    height: dp(30)
+
+                MDFillRoundFlatButton:
+                    text: "Contact Us"
+                    font_name: "BPoppins"
+                    halign: "center"
+                    md_bg_color: 235/255, 143/255, 52/255, 1
+                    text_color: 1, 1, 1, 1
+                    size_hint_y: None
+                    height: dp(50)
+                    pos_hint: {"center_x": 0.5}
+                    #on_release: app.contact_support()
