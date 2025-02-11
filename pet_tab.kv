@@ -259,40 +259,39 @@
             selected_color_background: 1, 1, 1, 0  
             text_color_active: 79/255, 54/255, 48/255, 1
             text_color_normal: 217/255, 90/255, 26/255, 1
-            size_hint_y: 0.2
-            
+            size_hint_y: 0.18
 
             MDBottomNavigationItem:
                 name: "home"
                 icon: "home"
                 text: "Home"
-                md_bg_color: 1, 1, 1, 1
+                md_bg_color: 255/255, 255/255, 255/255, 1
                 on_tab_press: root.home()
                   
             MDBottomNavigationItem:
                 name: "activitylogs"
                 icon: "file-document"
                 text: "Activity Logs"
-                md_bg_color: 1, 1, 1, 1
+                md_bg_color: 255/255, 255/255, 255/255, 1
                 on_tab_press: root.activity_logs()
                 
             MDBottomNavigationItem:
                 name: "camera"
                 icon: "camera"
                 text: "Camera"
-                md_bg_color: 1, 1, 1, 1
+                md_bg_color: 255/255, 255/255, 255/255, 1
                 on_tab_press: root.go_to_live_feed()
 
             MDBottomNavigationItem:
                 name: "pet"
                 icon: "dog"
                 text: "Pet"
-                md_bg_color: 1, 1, 1, 1
+                md_bg_color: 255/255, 255/255, 255/255, 1
                 on_tab_press: root.pet_tab()
 
             MDBottomNavigationItem:
                 name: "profile"
                 icon: "account"
                 text: "Profile"
-                md_bg_color: 1, 1, 1, 1
+                md_bg_color: 255/255, 255/255, 255/255, 1
                 on_tab_press: root.profile_tab()

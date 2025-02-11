@@ -15,13 +15,23 @@
 
         BoxLayout:
             orientation: 'vertical'
-            padding: dp(10)
+            padding: dp(7)
 
             Label:
                 id: date_label
                 text: ""  # Placeholder, will be updated dynamically
                 font_name: "BPoppins"
                 font_size: '18sp'
+                size_hint_y: None
+                height: self.texture_size[1]
+                color: 79/255, 54/255, 48/255, 1  # Text color for the date
+                halign: 'center'
+
+            Label:
+                id: dect_label
+                text: "Detected Behaviors:" 
+                font_name: "BPoppins"
+                font_size: '15sp'
                 size_hint_y: None
                 height: self.texture_size[1]
                 color: 79/255, 54/255, 48/255, 1  # Text color for the date
@@ -36,7 +46,7 @@
 
                     Label:
                         id: behavior_log
-                        text: "Detected Behavior Log:\n"
+                        text: " "
                         font_name: "MPoppins"
                         font_size: '14sp'
                         size_hint_y: None
@@ -52,9 +62,8 @@
             selected_color_background: 1, 1, 1, 0  
             text_color_active: 79/255, 54/255, 48/255, 1
             text_color_normal: 217/255, 90/255, 26/255, 1
-            size_hint_y: 0.2
+            size_hint_y: 0.18
             
-
             MDBottomNavigationItem:
                 name: "home"
                 icon: "home"

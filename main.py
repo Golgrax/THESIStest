@@ -3,6 +3,8 @@ import cv2
 import numpy as np
 import torch
 import pytz
+import threading
+import queue
 from datetime import datetime
 from PIL import Image 
 from ultralytics import YOLO
@@ -25,6 +27,12 @@ from kivy.uix.screenmanager import Screen, ScreenManager
 from kivymd.app import MDApp
 from kivy.uix.boxlayout import BoxLayout
 from kivy.metrics import dp
+import matplotlib.pyplot as plt
+import matplotlib.colors as mcolors
+from matplotlib.colors import LinearSegmentedColormap
+from kivy.utils import get_color_from_hex
+from PIL import Image as PILImage, ImageDraw, ImageFont
+
 
 def scale_bbox_to_thermal(bbox, live_width, live_height, thermal_width, thermal_height):
 
@@ -67,10 +75,9 @@ class LiveFeedScreen(Screen):
         super().__init__(**kwargs)
 
         self.dog_model = YOLO('dog.pt')
-        self.behavior_model = YOLO('TEST1.pt')
+        self.behavior_model = YOLO('best1.pt')
 
         ip = '192.168.0.102'
-
         # RTSP URL
         self.rtsp_url = f'rtsp://admin:L2A51CBA@{ip}:554/cam/realmonitor?channel=1&subtype=0&unicast=true&proto=Onvif'
 
@@ -79,20 +86,34 @@ class LiveFeedScreen(Screen):
         layout.add_widget(self.img_widget)
 
         self.capture = cv2.VideoCapture(self.rtsp_url)
+        self.frame_queue = queue.Queue(maxsize=10)
+        self.thread = threading.Thread(target=self.read_frames)
+        self.thread.daemon = True
+        self.thread.start()
 
-        # Initialize previous behavior to None
+        Clock.schedule_interval(self.update_frame, 1/60)
+
         self.previous_saved_behavior = None 
         self.previous_behavior = None
 
-        Clock.schedule_interval(self.update_frame, 1/30)
-
         self.add_widget(layout)
 
+    def read_frames(self):
+        while True:
+            ret, frame = self.capture.read()
+            if ret and not self.frame_queue.full():
+                self.frame_queue.put(frame)
+
     def update_frame(self, dt):
-        ret, frame = self.capture.read()
-        if ret:
+        if not self.frame_queue.empty():
+            frame = self.frame_queue.get()
             frame = cv2.flip(frame, 0)
             detected_behaviors, dog_boxes = self.detect_dog_and_behavior(frame)
+
+            # Limit to only 1 dog and 1 bounding box
+            if dog_boxes:
+                # Choose the largest bounding box (if multiple are detected)
+                dog_boxes = [self.select_largest_bbox(dog_boxes)]
 
             app = PetWatch.get_running_app()
             app.shared_data['dog_bboxes'] = dog_boxes
@@ -100,40 +121,21 @@ class LiveFeedScreen(Screen):
 
             for box, behavior in zip(dog_boxes, detected_behaviors):
                 x1, y1, x2, y2 = box
-                behavior_label = behavior["behavior"].capitalize()  # Capitalize the behavior text
+                behavior_label = behavior["behavior"].capitalize()
 
-                # Draw the bounding box (unchanged)
-                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 3)  # Green bounding box
+                # Draw bounding box
+                cv2.rectangle(frame, (x1, y1), (x2, y2), (0, 255, 0), 3)
 
-                # Define font properties
+                # Draw behavior label
                 font = cv2.FONT_HERSHEY_SIMPLEX
                 font_scale = 2
                 font_thickness = 5
-
-                # Get text size
                 (text_width, text_height), _ = cv2.getTextSize(behavior_label, font, font_scale, font_thickness)
-
-                # Create a blank image for the text
                 text_img = np.full((text_height + 15, text_width + 15, 3), (0, 255, 0), dtype=np.uint8)
-                text_color = (255, 255, 255)  # White text
-
-
-                # Put the text onto the blank image
-                cv2.putText(
-                    text_img,
-                    behavior_label,
-                    (5, text_height + 5),  # Offset for padding
-                    font,
-                    font_scale,
-                    text_color,
-                    font_thickness,
-                    lineType=cv2.LINE_AA,
-                )
-
-                # Flip the text image vertically
+                text_color = (255, 255, 255)
+                cv2.putText(text_img, behavior_label, (5, text_height + 5), font, font_scale, text_color, font_thickness, lineType=cv2.LINE_AA)
                 flipped_text_img = cv2.flip(text_img, 0)
 
-                # Determine position to overlay the text image
                 text_x = x1
                 text_y = min(frame.shape[0] - text_height, y2 + text_height + 5)
                 overlay_y1 = max(0, text_y)
@@ -141,8 +143,7 @@ class LiveFeedScreen(Screen):
                 overlay_x1 = text_x
                 overlay_x2 = min(frame.shape[1], overlay_x1 + flipped_text_img.shape[1])
 
-                # Blend the flipped text image onto the frame
-                alpha = 0.9  # Transparency factor
+                alpha = 0.9
                 if overlay_y2 > overlay_y1 and overlay_x2 > overlay_x1:
                     frame[overlay_y1:overlay_y2, overlay_x1:overlay_x2] = cv2.addWeighted(
                         frame[overlay_y1:overlay_y2, overlay_x1:overlay_x2],
@@ -197,6 +198,18 @@ class LiveFeedScreen(Screen):
 
         return detected_behaviors, dog_boxes
 
+    def select_largest_bbox(self, dog_boxes):
+        """Select the largest bounding box based on area (width * height)."""
+        largest_bbox = None
+        max_area = 0
+        for box in dog_boxes:
+            x1, y1, x2, y2 = box
+            area = (x2 - x1) * (y2 - y1)
+            if area > max_area:
+                max_area = area
+                largest_bbox = box
+        return largest_bbox
+
     def send_behavior_log(self, behavior):
         behavior = behavior.capitalize()  # Ensure the behavior label is capitalized
         timestamp = datetime.now().isoformat()  # Get the current timestamp in ISO format
@@ -219,6 +232,7 @@ class LiveFeedScreen(Screen):
                 print(f"Failed to save log: {response.json()}")
         except Exception as e:
             print(f"Error: {e}")
+
 
     def on_enter(self):
         print(f'Entering Live Feed Screen. RTSP URL: {self.rtsp_url}')
@@ -281,7 +295,7 @@ class ThermalCameraScreen(Screen):
 
     def fetch_thermal_data_from_server(self):
         try:
-            #ESP32 IP address
+            # ESP32 IP address
             ESP32_ip = 'http://192.168.0.200' 
             endpoint = '/thermal'
 
@@ -340,32 +354,103 @@ class ThermalCameraScreen(Screen):
             screen_width = Window.width
             target_width = screen_width
             target_height = int(target_width * 9 / 16)  # Maintain 16:9 aspect ratio
-            resized_data = cv2.resize(smoothed_data, (target_width, target_height), interpolation=cv2.INTER_CUBIC)
+            resized_data = cv2.resize(smoothed_data, (target_width, target_height), interpolation=cv2.INTER_LANCZOS4)
 
-            # Normalize and apply colormap
-            normalized_data = cv2.normalize(resized_data, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
-            colormap = cv2.applyColorMap(normalized_data, cv2.COLORMAP_INFERNO)
+            # Normalize the data for colormap application
+            normalized_data = cv2.normalize(resized_data, None, 0, 1, cv2.NORM_MINMAX)
+            from matplotlib import cm
+            # Apply the Inferno colormap from Matplotlib
+            inferno_cmap = cm.get_cmap('inferno')
+            colormap = (inferno_cmap(normalized_data)[:, :, :3] * 255).astype(np.uint8)
 
-            # Adjust bounding boxes to the displayed resolution with a downward offset
+            # Convert to RGB format for Kivy
+            colormap = cv2.cvtColor(colormap, cv2.COLOR_BGR2RGB)
+
+            # Adjust bounding boxes to the displayed resolution with calculated offsets and resizing
             display_width, display_height = colormap.shape[1], colormap.shape[0]
-            vertical_offset = int(display_height * 0.6)  # Adjust as needed (5% of display height here)
+
+            # Calculate the vertical offset based on 2 inches downward position
+            camera_distance_in_inches = 2  # Distance in inches between cameras
+            pixels_per_inch = display_height / 24  # Assuming thermal camera's height is 24 units
+            vertical_offset = int(camera_distance_in_inches * pixels_per_inch)
+
+            # Shrink factor to make bounding boxes slightly smaller
+            shrink_factor = 0.8  # 90% of the original size
+
             for x1, y1, x2, y2 in scaled_bboxes:
+                # Scale the bounding box to the displayed resolution
                 display_x1 = int(x1 * display_width / 32)
                 display_x2 = int(x2 * display_width / 32)
                 display_y1 = int(y1 * display_height / 24) + vertical_offset
                 display_y2 = int(y2 * display_height / 24) + vertical_offset
-                cv2.rectangle(colormap, (display_x1, display_y1), (display_x2, display_y2), (0, 255, 0), 1)  # Green bounding box
+
+                # Calculate the center of the bounding box
+                center_x = (display_x1 + display_x2) // 2
+                center_y = (display_y1 + display_y2) // 2
+
+                # Apply shrink factor
+                new_width = int((display_x2 - display_x1) * shrink_factor)
+                new_height = int((display_y2 - display_y1) * shrink_factor)
+
+                # Update bounding box coordinates based on the shrink factor
+                display_x1 = center_x - new_width // 2
+                display_x2 = center_x + new_width // 2
+                display_y1 = center_y - new_height // 2
+                display_y2 = center_y + new_height // 2
+
+                # Ensure the adjusted bounding box stays within the displayed frame
+                display_x1 = max(0, min(display_width - 1, display_x1))
+                display_x2 = max(0, min(display_width - 1, display_x2))
+                display_y1 = max(0, min(display_height - 1, display_y1))
+                display_y2 = max(0, min(display_height - 1, display_y2))
+
+                # Draw the bounding box
+
+                # Drawing the green bounding box
+                cv2.rectangle(colormap, (display_x1, display_y1), (display_x2, display_y2), (0, 255, 0), 3)
+
+                
+                # Define text for the temperature (split it into two parts)
+                temp_text = f"{dog_temp:.2f}"  # Temperature without the degree symbol
+                degree_text = "C"  # Degree symbol and "C" part
+
+                # Font settings
+                font = cv2.FONT_HERSHEY_COMPLEX  # Use a different font
+                font_scale = 0.7
+                font_thickness = 2
+                color = (255, 255, 255)  # White color
+
+                # Position text on the left of the bounding box
+                text_size_temp = cv2.getTextSize(temp_text, font, font_scale, font_thickness)[0]
+                
+                padding = 5  # Horizontal and vertical space from the top-left corner of the bounding box
+
+                # Position the text at the top-left corner of the bounding box
+                text_x = display_x1 + padding  # Horizontal position (slightly offset from the left)
+                text_y = display_y1 - padding  # Vertical position (slightly offset from the top)
+
+                # Draw the temperature (without degree symbol)
+                cv2.putText(colormap, temp_text, (text_x, text_y), font, font_scale, color, font_thickness, cv2.LINE_AA)
+
+                # Draw the degree symbol and "C" next to the temperature
+                text_x += text_size_temp[0] + 2  # Move x position after temperature
+                cv2.putText(colormap, degree_text, (text_x, text_y), font, font_scale, color, font_thickness, cv2.LINE_AA)
+
+                # Flip the image horizontally (flip the bounding box and the text)
+                colormap = cv2.flip(colormap, 1)
+
 
             # Update the texture for Kivy
             texture = Texture.create(size=(colormap.shape[1], colormap.shape[0]), colorfmt='rgb')
             texture.blit_buffer(colormap.tobytes(), colorfmt='rgb', bufferfmt='ubyte')
             texture.flip_vertical()
+            texture.flip_horizontal()
+            texture.mag_filter = 'linear'  # Enable smoothing for texture scaling
 
             self.image_widget.texture = texture
 
         except Exception as e:
             print(f"Error displaying heatmap: {e}")
-
 
     def update_thermal_view(self, dt):
         frame_data = self.fetch_thermal_data_from_server()
@@ -417,11 +502,16 @@ class ActivityLogsScreen(Screen):
         # Get the first detected behavior (assumes behaviors are in a prioritized order)
         current_behavior = behavior_labels[0]
 
+        # Check if the behavior has changed
         if self.previous_behavior != current_behavior:
             current_time = datetime.now().strftime("%I:%M:%S %p")
             log_entry = f"{current_time} - {current_behavior}"
+
+            # Only add the log if it isn't already present
             if log_entry not in self.activity_log:
                 self.activity_log.insert(0, log_entry)  # Prepend the log entry
+
+            # Update the previous behavior
             self.previous_behavior = current_behavior
             self.update_activity_log_display()
 
@@ -443,16 +533,21 @@ class ActivityLogsScreen(Screen):
             if response.status_code == 200:
                 fetched_logs = response.json()  # Assumes logs are returned as a JSON list
                 
-                # Process fetched logs to extract the necessary data (e.g., only time)
-                new_logs = [
-                    f"{self.convert_to_ph_time(log['timestamp'])} - {log['behavior']}"
-                    for log in fetched_logs
-                ]
+                # Get today's date in the format used by the log timestamps
+                today = datetime.now().date()
                 
-                # Add new logs if they are not already in the activity log
+                # Filter logs to only include those with today's date
+                new_logs = []
+                for log in fetched_logs:
+                    log_timestamp = datetime.fromisoformat(log['timestamp'].replace('Z', '+00:00'))
+                    if log_timestamp.date() == today:  # Check if the log is from today
+                        log_entry = f"{self.convert_to_ph_time(log['timestamp'])} - {log['behavior']}"
+                        if log_entry not in self.activity_log:
+                            new_logs.append(log_entry)
+                
+                # Add filtered logs to the activity log
                 for log in new_logs:
-                    if log not in self.activity_log:
-                        self.activity_log.insert(0, log)  # Prepend new logs
+                    self.activity_log.insert(0, log)  # Prepend new logs
                 
                 # Sort logs explicitly by reverse chronological order
                 self.activity_log.sort(reverse=True)

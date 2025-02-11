@@ -8,11 +8,19 @@
             pos: self.pos
             size: self.size
 
+    canvas.before:
+        Color:
+            rgba: 243/255, 233/255, 226/255, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
     BoxLayout:
         orientation: 'vertical'
 
         # Top bar outside the scrollable area
         MDTopAppBar:
+            title: ""
             title: ""
             font_name: "BPoppins"
             pos_hint: {"top": 0.98}
@@ -21,27 +29,29 @@
             size_hint_y: None
             height: dp(45)
 
-            # Centered BoxLayout for the logo and label
             BoxLayout:
                 orientation: 'horizontal'
-                size_hint: None, None
-                size: self.width, dp(45)  # Make it the same height as the MDTopAppBar
-                pos_hint: {"center_x": 0.5, "center_y": 0.5}
-                padding: [dp(10), 0]  # Adjust the padding as needed
+                spacing: dp(8)  
+                padding: [0, 0, 0, 0]  
+
+                # Logo on the left
+                Image:
+                    source: 'assets/logo2.png'
+                    size_hint: None, None
+                    size: dp(80), dp(80)  
+                    allow_stretch: True
+                    pos_hint: {"center_y": 0.75}  
 
                 # Label beside the logo
                 MDLabel:
-                    text: "PETWATCH"
+                    text: "P E T W A T C H"
                     font_name: "BPoppins"
-                    font_size: "20sp"  # Adjusted font size for better fit
+                    font_size: "25sp"
                     theme_text_color: "Custom"
                     text_color: 1, 1, 1, 1 
-                    halign: "right"
+                    halign: "left"
                     valign: "center"
-                    pos_hint: {"center_y": 0.5}
-                    width: self.texture_size[0]
-                    width: self.parent.width
-                    size_hint: None, None
+                    pos_hint: {"center_y": 0.80}  
 
         # Scrollable content area
         ScrollView:
@@ -53,6 +63,7 @@
                 spacing: 0
                 size_hint_y: None
                 height: self.minimum_height
+
 
                 Image:
                     source: 'assets/dashboard.png'
@@ -217,13 +228,15 @@
                                 theme_text_color: "Custom"
                                 text_color: 34/255, 139/255, 34/255, 1  # Green
 
+                                text_color: 34/255, 139/255, 34/255, 1  
+
         # Bottom navigation stays outside of the scrollable area
         MDBottomNavigation:
             panel_color: 250/255, 177/255, 47/255, 1
             selected_color_background: 1, 1, 1, 0  
             text_color_active: 79/255, 54/255, 48/255, 1
             text_color_normal: 217/255, 90/255, 26/255, 1
-            size_hint_y: 0.2
+            size_hint_y: 0.18
             
 
             MDBottomNavigationItem:

@@ -159,21 +159,20 @@
             color: (79/255, 54/255, 48/255, 1)
             font_size: "12sp"
             font_name: "BPoppins"
-            on_release:
-                root.manager.current = "forgot_password"
+            on_release: root.manager.current = "forgot_password"
 
         MDLabel:
             text: "Don't have an account?"
             font_name: "BPoppins"
             font_size: "13sp"
-            pos_hint: {"center_x": .68, "center_y": .10}
+            pos_hint: {"center_x": .68, "center_y": .05}
             color: (120/255, 89/255, 66/255, 1)
 
         MDTextButton:
             text: "Sign up"
             font_name: "BPoppins"
             font_size: "13sp"
-            pos_hint: {"center_x": .75, "center_y": .10}
+            pos_hint: {"center_x": .75, "center_y": .05}
             color: (120/255, 89/255, 66/255, 1)
             on_release:
                 root.manager.transition.direction = "left"
