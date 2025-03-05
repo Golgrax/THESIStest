@@ -1,37 +1,77 @@
-import requests
-import cv2
-import numpy as np
-import torch
-import pytz
-import threading
-import queue
-from datetime import datetime
-from PIL import Image 
-from ultralytics import YOLO
-from kivy.graphics.texture import Texture
-from kivy.core.text import LabelBase
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivymd.app import MDApp
-from kivy.lang import Builder
-from kivy.clock import Clock
-from kivy.uix.image import Image
-from kivy.uix.boxlayout import BoxLayout
-from kivymd.uix.menu import MDDropdownMenu
-from kivymd.uix.button import MDRaisedButton
-from kivy.core.window import Window
-from kivymd.uix.dialog import MDDialog
-from kivy.uix.screenmanager import NoTransition 
-from kivy.uix.popup import Popup
-from kivy.uix.label import Label
-from kivy.uix.screenmanager import Screen, ScreenManager
-from kivymd.app import MDApp
-from kivy.uix.boxlayout import BoxLayout
-from kivy.metrics import dp
-import matplotlib.pyplot as plt
-import matplotlib.colors as mcolors
-from matplotlib.colors import LinearSegmentedColormap
-from kivy.utils import get_color_from_hex
-from PIL import Image as PILImage, ImageDraw, ImageFont
+import os
+if 'ANDROID_AUGMENT' in os.environ:
+    import cv2
+    import torch
+    import pytz
+    import tensorflow.lite as tflite
+    import requests
+    import numpy as np
+    import threading
+    import queue
+    from datetime import datetime
+    from PIL import Image 
+    from ultralytics import YOLO
+    from kivy.graphics.texture import Texture
+    from kivy.core.text import LabelBase
+    from kivy.uix.screenmanager import ScreenManager, Screen
+    from kivymd.app import MDApp
+    from kivy.lang import Builder
+    from kivy.clock import Clock
+    from kivy.uix.image import Image
+    from kivy.uix.boxlayout import BoxLayout
+    from kivymd.uix.menu import MDDropdownMenu
+    from kivymd.uix.button import MDRaisedButton
+    from kivy.core.window import Window
+    from kivymd.uix.dialog import MDDialog
+    from kivy.uix.screenmanager import NoTransition 
+    from kivy.uix.popup import Popup
+    from kivy.uix.label import Label
+    from kivy.uix.screenmanager import Screen, ScreenManager
+    from kivymd.app import MDApp
+    from kivy.uix.boxlayout import BoxLayout
+    from kivy.metrics import dp
+    import matplotlib.pyplot as plt
+    import matplotlib.colors as mcolors
+    from matplotlib.colors import LinearSegmentedColormap
+    from kivy.utils import get_color_from_hex
+    from PIL import Image as PILImage, ImageDraw, ImageFont
+# else:
+#     import cv2
+#     import torch
+#     import pytz
+#     import tensorflow.lite as tflite
+#     import requests
+#     import numpy as np
+#     import threading
+#     import queue
+#     from datetime import datetime
+#     from PIL import Image 
+#     from ultralytics import YOLO
+#     from kivy.graphics.texture import Texture
+#     from kivy.core.text import LabelBase
+#     from kivy.uix.screenmanager import ScreenManager, Screen
+#     from kivymd.app import MDApp
+#     from kivy.lang import Builder
+#     from kivy.clock import Clock
+#     from kivy.uix.image import Image
+#     from kivy.uix.boxlayout import BoxLayout
+#     from kivymd.uix.menu import MDDropdownMenu
+#     from kivymd.uix.button import MDRaisedButton
+#     from kivy.core.window import Window
+#     from kivymd.uix.dialog import MDDialog
+#     from kivy.uix.screenmanager import NoTransition 
+#     from kivy.uix.popup import Popup
+#     from kivy.uix.label import Label
+#     from kivy.uix.screenmanager import Screen, ScreenManager
+#     from kivymd.app import MDApp
+#     from kivy.uix.boxlayout import BoxLayout
+#     from kivy.metrics import dp
+#     import matplotlib.pyplot as plt
+#     import matplotlib.colors as mcolors
+#     from matplotlib.colors import LinearSegmentedColormap
+#     from kivy.utils import get_color_from_hex
+#     from PIL import Image as PILImage, ImageDraw, ImageFont
+
 
 
 def scale_bbox_to_thermal(bbox, live_width, live_height, thermal_width, thermal_height):
@@ -74,8 +114,11 @@ class LiveFeedScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
 
-        self.dog_model = YOLO('dog.pt')
-        self.behavior_model = YOLO('best1.pt')
+        # self.dog_model = YOLO('dog.pt')
+        self.dog_model = self.load_tflite_model("dog_saved_model/dog_float16.tflite")  # Load TFLite dog model
+
+        #self.behavior_model = YOLO('best1.pt')
+        self.behavior_model = self.load_tflite_model("best1_saved_model/best1_float16.tflite")  # Load TFLite behavior model
 
         ip = '192.168.0.102'
         # RTSP URL
@@ -97,6 +140,13 @@ class LiveFeedScreen(Screen):
         self.previous_behavior = None
 
         self.add_widget(layout)
+    
+    def load_tflite_model(self, model_path):
+        """ Load the TensorFlow Lite model """
+        interpreter = tflite.Interpreter(model_path=model_path)
+        interpreter.allocate_tensors()
+        return interpreter
+
 
     def read_frames(self):
         while True:
@@ -168,35 +218,66 @@ class LiveFeedScreen(Screen):
         detected_behaviors = []
         dog_boxes = []
 
-        # Perform dog detection
-        dog_results = self.dog_model(frame)
+    # Perform dog detection
+        dog_results = self.run_tflite_inference(frame, self.dog_model)
 
-        if dog_results[0].boxes is not None and dog_results[0].boxes.shape[0] > 0:
-            for dog_bbox in dog_results[0].boxes:
-                x1, y1, x2, y2 = dog_bbox.xyxy[0].tolist()
-                x1, y1, x2, y2 = int(x1), int(y1), int(x2), int(y2)
+        if dog_results is not None and len(dog_results) > 0:
+            for dog_bbox in dog_results:
+                if len(dog_bbox) >= 6:  # Ensure valid bounding box format
+                    x_min, y_min, x_max, y_max, confidence, class_id = dog_bbox[:6]  # Extract bbox values and confidence
+                    confidence = float(confidence)  # Ensure it's a float
 
-                # Store the bounding box
-                dog_boxes.append((x1, y1, x2, y2))
+                if confidence > 0.5:  # Filter low-confidence detections
+                    dog_boxes.append((int(x_min), int(y_min), int(x_max), int(y_max)))
+                    print(f"✅ Detected object {int(class_id)} with confidence {confidence:.2f}")
 
-                # Crop the image to focus on the dog region
-                dog_crop = frame[y1:y2, x1:x2]
-                dog_resized = cv2.resize(dog_crop, (224, 224))
-                dog_resized = cv2.cvtColor(dog_resized, cv2.COLOR_BGR2RGB)
-                dog_resized = dog_resized.astype(np.float32) / 255.0
-                dog_resized = np.expand_dims(dog_resized, axis=0)
-                dog_resized = torch.from_numpy(dog_resized).permute(0, 3, 1, 2).float()
+                    # Crop the image to focus on the dog region
+                    x_min, y_min, x_max, y_max = int(x_min), int(y_min), int(x_max), int(y_max)
+                    dog_crop = frame[y_min:y_max, x_min:x_max]
 
-                # Run behavior detection on the cropped dog region
-                behavior_results = self.behavior_model(dog_resized)
+                    if dog_crop is None or dog_crop.size == 0:  # Check if the crop is valid
+                        print("❌ Warning: dog_crop is empty. Skipping resize.")
+                    else:
+                        dog_resized = cv2.resize(dog_crop, (224, 224))
+                        dog_resized = cv2.cvtColor(dog_resized, cv2.COLOR_BGR2RGB)
+                        dog_resized = dog_resized.astype(np.float32) / 255.0
+                        dog_resized = np.expand_dims(dog_resized, axis=0)
 
-                # Extract detected behavior labels
-                if behavior_results[0].boxes is not None and len(behavior_results[0].boxes) > 0:
-                    for behavior_box in behavior_results[0].boxes:
-                        behavior_label = self.behavior_model.names[int(behavior_box.cls)]
-                        detected_behaviors.append({"behavior": behavior_label})
+                        # Run behavior detection on the cropped dog region
+                        behavior_results = self.run_tflite_inference(dog_resized, self.behavior_model)
+
+                        # Extract detected behavior labels
+                        if behavior_results is not None and len(behavior_results) > 0:
+                            for behavior_box in behavior_results:
+                                behavior_label = self.behavior_model.names[int(behavior_box[0])]
+                                detected_behaviors.append({"behavior": behavior_label})
 
         return detected_behaviors, dog_boxes
+    
+    def run_tflite_inference(self, input_image, model):
+        """ Run inference using TensorFlow Lite model and extract bounding boxes """
+        interpreter = model
+        input_details = interpreter.get_input_details()
+        output_details = interpreter.get_output_details()
+
+        # Resize image to match model input size
+        input_image = cv2.resize(input_image, (input_details[0]['shape'][1], input_details[0]['shape'][2]))
+        input_image = np.array(input_image, dtype=np.float32) / 255.0
+        input_image = np.expand_dims(input_image, axis=0)  # Add batch dimension
+
+        interpreter.set_tensor(input_details[0]['index'], input_image)
+        interpreter.invoke()
+
+        # Get output data
+        output_data = interpreter.get_tensor(output_details[0]['index'])
+
+        # Extract bounding boxes (depends on model output format)
+        boxes = output_data[0]  # Adjust if the output format is different
+
+        return boxes
+
+
+
 
     def select_largest_bbox(self, dog_boxes):
         """Select the largest bounding box based on area (width * height)."""

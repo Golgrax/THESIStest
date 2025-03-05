@@ -13,7 +13,7 @@ package.domain = org.petwatch
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas,ttf,pt
+source.include_exts = py,png,jpg,kv,atlas,ttf,pt,tflite
 
 # (list) List of inclusions using pattern matching
 #source.include_patterns = assets/*.png, fonts/*.ttf
@@ -37,8 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3,kivy,kivymd,requests,pillow,opencv-python,ultralytics
-
+requirements = python3, kivy==2.1.0, kivymd==1.1.1, sdl2_ttf==2.0.15,opencv-python-headless, torch, pytz, requests, numpy, pillow, matplotlib,tflite-runtime
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
 # requirements.source.kivy = ../../kivy
@@ -95,7 +94,7 @@ fullscreen = 0
 
 # (list) Permissions
 # (See https://python-for-android.readthedocs.io/en/latest/buildoptions/#build-options-1 for all the supported syntaxes and properties)
-#android.permissions = android.permission.INTERNET, (name=android.permission.WRITE_EXTERNAL_STORAGE;maxSdkVersion=18)
+#android.permissions = android.permission.INTERNET,CAMERA,ACCESS_NETWORK_STATE (name=android.permission.WRITE_EXTERNAL_STORAGE;maxSdkVersion=18)
 
 # (list) features (adds uses-feature -tags to manifest)
 #android.features = android.hardware.usb.host
@@ -201,7 +200,7 @@ android.accept_sdk_license = True
 #android.add_resources =
 
 # (list) Gradle dependencies to add
-#android.gradle_dependencies =
+#android.gradle_dependencies = "org.tensorflow:tensorflow-lite:2.11.0"
 
 # (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
 # contains an 'androidx' package, or any package from Kotlin source.
