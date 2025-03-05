@@ -1,0 +1,22 @@
+description: Ultralytics best1 model trained on config.yaml
+author: Ultralytics
+date: '2025-02-24T17:49:32.945739'
+version: 8.3.78
+license: AGPL-3.0 License (https://ultralytics.com/license)
+docs: https://docs.ultralytics.com
+stride: 32
+task: detect
+batch: 1
+imgsz:
+- 640
+- 640
+names:
+  0: Laying
+  1: Walking
+  2: Standing
+  3: Sitting
+args:
+  batch: 1
+  half: false
+  int8: false
+  nms: false
