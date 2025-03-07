@@ -35,6 +35,8 @@ if 'ANDROID_AUGMENT' in os.environ:
     from matplotlib.colors import LinearSegmentedColormap
     from kivy.utils import get_color_from_hex
     from PIL import Image as PILImage, ImageDraw, ImageFont
+    from kivy.lang import Builder
+
 # else:
 #     import cv2
 #     import torch
@@ -71,6 +73,8 @@ if 'ANDROID_AUGMENT' in os.environ:
 #     from matplotlib.colors import LinearSegmentedColormap
 #     from kivy.utils import get_color_from_hex
 #     from PIL import Image as PILImage, ImageDraw, ImageFont
+#     from kivy.lang import Builder
+
 
 
 
