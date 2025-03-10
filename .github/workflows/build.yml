@@ -17,13 +17,19 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: "3.10"
+          python-version: "3.11"
 
       - name: Install dependencies
         run: |
-          sudo apt update
-          sudo apt install -y zip openjdk-17-jdk
-          pip install --upgrade Cython virtualenv buildozer
+          sudo apt update && sudo apt install -y \
+          python3-pip python3-setuptools python3-wheel \
+          git zip unzip openjdk-17-jdk autoconf automake \
+          cmake pkg-config libtool libffi-dev libssl-dev \
+          libsqlite3-dev libbz2-dev
+
+      - name: Install Python requirements
+        run: |
+          pip install -r requirements.txt
 
       - name: Build APK
         run: |
