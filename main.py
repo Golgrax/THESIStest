@@ -1,43 +1,42 @@
 import os
-
-from kivy.graphics.texture import Texture
-from kivy.core.text import LabelBase
-from kivy.uix.screenmanager import ScreenManager, Screen
-from kivymd.app import MDApp
-from kivy.lang import Builder
-from kivy.clock import Clock
-from kivy.uix.image import Image
-from kivy.uix.boxlayout import BoxLayout
-from kivymd.uix.menu import MDDropdownMenu
-from kivymd.uix.button import MDRaisedButton
-from kivy.core.window import Window
-from kivymd.uix.dialog import MDDialog
-from kivy.uix.screenmanager import NoTransition 
-from kivy.uix.popup import Popup
-from kivy.uix.label import Label
-from kivy.uix.screenmanager import Screen, ScreenManager
-from kivymd.app import MDApp
-from kivy.uix.boxlayout import BoxLayout
-from kivy.metrics import dp
-from kivy.utils import get_color_from_hex
-from kivy.lang import Builder
-
-if 'ANDROID_AUGMENT' in os.environ:
-  import cv2
-  import torch
-  import pytz
-  import tensorflow.lite as tflite
-  import requests
-  import numpy as np
-  import threading
-  import queue
-  from datetime import datetime
-  from PIL import Image 
-  from ultralytics import YOLO
-  import matplotlib.pyplot as plt
-  import matplotlib.colors as mcolors
-  from matplotlib.colors import LinearSegmentedColormap
-  from PIL import Image as PILImage, ImageDraw, ImageFont
+ if 'ANDROID_AUGMENT' in os.environ:
+     import cv2
+     import torch
+     import pytz
+     import tensorflow.lite as tflite
+     import requests
+     import numpy as np
+     import threading
+     import queue
+     from datetime import datetime
+     from PIL import Image 
+     from ultralytics import YOLO
+     from kivy.graphics.texture import Texture
+     from kivy.core.text import LabelBase
+     from kivy.uix.screenmanager import ScreenManager, Screen
+     from kivymd.app import MDApp
+     from kivy.lang import Builder
+     from kivy.clock import Clock
+     from kivy.uix.image import Image
+     from kivy.uix.boxlayout import BoxLayout
+     from kivymd.uix.menu import MDDropdownMenu
+     from kivymd.uix.button import MDRaisedButton
+     from kivy.core.window import Window
+     from kivymd.uix.dialog import MDDialog
+     from kivy.uix.screenmanager import NoTransition 
+     from kivy.uix.popup import Popup
+     from kivy.uix.label import Label
+     from kivy.uix.screenmanager import Screen, ScreenManager
+     from kivymd.app import MDApp
+     from kivy.uix.boxlayout import BoxLayout
+     from kivy.metrics import dp
+     import matplotlib.pyplot as plt
+     import matplotlib.colors as mcolors
+     from matplotlib.colors import LinearSegmentedColormap
+     from kivy.utils import get_color_from_hex
+     from PIL import Image as PILImage, ImageDraw, ImageFont
+     from kivy.lang import Builder
+ 
 
 
 
