@@ -34,6 +34,8 @@ jobs:
 
       - name: Build APK
         run: |
+          rm -rf .buildozer
+          buildozer android clean
           pip install --upgrade buildozer
           pip install --upgrade buildozer python-for-android
           buildozer android debug
