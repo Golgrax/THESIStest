@@ -22,6 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt update && sudo apt install -y \
+          sudo apt install libffi-dev \
           python3-pip python3-setuptools python3-wheel \
           git zip unzip openjdk-17-jdk autoconf automake \
           cmake pkg-config libtool libffi-dev libssl-dev \
