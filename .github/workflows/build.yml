@@ -35,6 +35,7 @@ jobs:
       - name: Build APK
         run: |
           pip install --upgrade buildozer
+          pip install --upgrade buildozer python-for-android
           buildozer android debug
 
       - name: Upload APK
