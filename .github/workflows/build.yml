@@ -25,6 +25,9 @@ jobs:
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev
           pip3 install --user --upgrade Cython==0.29.33 virtualenv
           pip install --extra-index-url https://google-coral.github.io/py-repo/ tflite-runtime
+          pip install kivy kivymd opencv-python-headless requests numpy pillow ultralytics
+
+
 
 
       - name: Set up Android tools
@@ -42,6 +45,7 @@ jobs:
 
       - name: Build APK
         run: |
+          pip install --upgrade Cython
           pip install --upgrade buildozer
           pip install --upgrade python-for-android
           buildozer android debug
