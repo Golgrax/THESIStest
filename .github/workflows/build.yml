@@ -39,6 +39,13 @@ jobs:
           buildozer --version
           python3 -m pythonforandroid.toolchain --version  # Ensure p4a is installed
 
+      - name: Manually Create Missing Buildozer Directories
+        run: |
+          mkdir -p $HOME/.buildozer/android/platform/python-for-android
+          mkdir -p $HOME/.buildozer/android/platform/build-arm64-v8a_armeabi-v7a
+          mkdir -p $HOME/.buildozer/android/app
+          echo "FORCING DIRECTORY CREATION TO PREVENT FileNotFoundError"
+
       - name: Set up Android SDK and NDK
         run: |
           export ANDROID_SDK_ROOT=$HOME/android-sdk
@@ -60,6 +67,7 @@ jobs:
           pip list
           buildozer --version
           python3 -m pythonforandroid.toolchain --version  # Check p4a is installed
+          ls -la $HOME/.buildozer/android/platform/  # Debug missing directories
 
       - name: Build APK
         run: |
