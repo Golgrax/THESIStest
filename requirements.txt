@@ -11,3 +11,5 @@ ultralytics
 opencv-python
 numpy
 pillow
+tensorflow
+tflite-runtime
