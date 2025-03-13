@@ -30,12 +30,13 @@ jobs:
           sudo apt install -y git zip unzip python3-pip autoconf libtool libffi-dev pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libssl-dev
           pip install --upgrade pip setuptools
 
-      - name: Install Buildozer
+      - name: Install Buildozer & python-for-android
         run: |
           pip install --upgrade Cython buildozer python-for-android
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
           echo "BUILD_PATH=$HOME/.local/bin" >> $GITHUB_ENV
           buildozer --version
+          python3 -m pythonforandroid.toolchain --version  # Ensure p4a is installed
 
       - name: Set up Android SDK and NDK
         run: |
@@ -57,6 +58,7 @@ jobs:
           python --version
           pip list
           buildozer --version
+          python3 -m pythonforandroid.toolchain --version  # Check p4a is installed
 
       - name: Build APK
         run: |
