@@ -8,7 +8,7 @@ kivymd
 psycopg2
 serial
 ultralytics
-opencv-python
+opencv-python-headless
 numpy
 pillow
 tensorflow
