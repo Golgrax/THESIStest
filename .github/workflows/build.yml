@@ -3,7 +3,7 @@ name: Build Petwatch Kivy APK
 on:
   push:
     branches:
-      - main  # Change to your branch name if different
+      - main  # Change this if your branch is different
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
@@ -19,41 +19,39 @@ jobs:
         with:
           python-version: "3.9"
 
-      - name: Install dependencies
+      - name: Install system dependencies
         run: |
           sudo apt update
-          sudo apt install -y pkg-config
-          sudo apt install -y git zip unzip openjdk-11-jdk python3-pip autoconf libtool pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev
+          sudo apt install -y pkg-config automake m4
+          sudo apt install -y git zip unzip openjdk-11-jdk python3-pip autoconf libtool libffi-dev pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libssl-dev
           pip install --upgrade pip setuptools
-          pip install --upgrade buildozer Cython python-for-android
-          pip3 install --user --upgrade Cython==0.29.33 virtualenv
-          pip install --extra-index-url https://google-coral.github.io/py-repo/ tflite-runtime
-          pip install kivy kivymd opencv-python-headless requests numpy pillow ultralytics
 
-
-
-
-      - name: Set up Android tools
+      - name: Install Python dependencies
         run: |
-          echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "platforms;android-31" "build-tools;33.0.2"
-          echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager "ndk;27.2.12479018"
-
-      - name: Install Python requirements
-        run: |
+          pip install --upgrade Cython buildozer python-for-android
           pip install -r requirements.txt
 
-      - name: Install docwriter
+      - name: Set up Android SDK and NDK
         run: |
-          pip install docwriter
+          export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
+          export ANDROID_SDK_ROOT=$HOME/.android-sdk
+          mkdir -p $ANDROID_SDK_ROOT
+          echo "y" | sdkmanager "platforms;android-31" "build-tools;33.0.2" "ndk;27.2.12479018"
+          echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+
+      - name: Verify installation
+        run: |
+          java -version
+          python --version
+          pip list
 
       - name: Build APK
         run: |
-          pip install --upgrade Cython
-          pip install --upgrade buildozer
-          pip install --upgrade python-for-android
-          buildozer android debug
+          buildozer android clean
+          buildozer -v android debug
 
-      - name: PetWatch APK
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Kivy-APK
