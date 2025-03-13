@@ -32,7 +32,8 @@ jobs:
 
       - name: Install Buildozer & python-for-android
         run: |
-          pip install --upgrade Cython buildozer python-for-android
+          pip install --upgrade Cython buildozer
+          pip install git+https://github.com/kivy/python-for-android.git
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
           echo "BUILD_PATH=$HOME/.local/bin" >> $GITHUB_ENV
           buildozer --version
