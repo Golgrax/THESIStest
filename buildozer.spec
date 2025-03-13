@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3, kivy, kivymd, opencv-python-headless, tflite_runtime, requests, numpy, pillow, ultralytics,cython==0.29.33
+requirements = python3,kivy,kivymd,opencv-python-headless,tflite-runtime==2.5.0.post1,requests,numpy,pillow,ultralytics
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
 # requirements.source.kivy = ../../kivy
