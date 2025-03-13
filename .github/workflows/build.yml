@@ -14,21 +14,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.9"
+      - name: Set up Java 17
+        run: |
+          sudo apt update
+          sudo apt remove -y openjdk-11-jdk
+          sudo apt install -y openjdk-17-jdk
+          export JAVA_HOME="/usr/lib/jvm/java-17-openjdk-amd64"
+          echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
+          echo "PATH=$JAVA_HOME/bin:$PATH" >> $GITHUB_ENV
+          java -version
 
       - name: Install system dependencies
         run: |
-          sudo apt update
           sudo apt install -y pkg-config automake m4
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool libffi-dev pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libssl-dev
+          sudo apt install -y git zip unzip python3-pip autoconf libtool libffi-dev pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libssl-dev
           pip install --upgrade pip setuptools
 
       - name: Set up Android SDK and NDK
         run: |
-          export JAVA_HOME="/usr/lib/jvm/java-11-openjdk-amd64"
           export ANDROID_SDK_ROOT=$HOME/android-sdk
           export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH
           mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
@@ -39,7 +42,6 @@ jobs:
           rm cmdline-tools.zip
           echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-31" "build-tools;33.0.2" "ndk;27.2.12479018"
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
-          echo "JAVA_HOME=$JAVA_HOME" >> $GITHUB_ENV
           echo "PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
 
       - name: Verify installation
