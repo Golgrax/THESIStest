@@ -347,7 +347,7 @@ p4a.bootstrap = sdl2
 #p4a.setup_py = false
 
 # (str) extra command line arguments to pass when invoking pythonforandroid.toolchain
-#p4a.extra_args = --requirements=libffi
+p4a.extra_args = --storage-dir=/home/runner/work/THESIS/THESIS/.buildozer/android/platform/build
 
 
 
