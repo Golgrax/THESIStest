@@ -24,14 +24,16 @@ jobs:
 
       - name: Set Java Version
         run: |
-          # Find the path to the java binary for JDK 17
-          JAVA_PATH=$(find /usr/lib/jvm/ -maxdepth 2 -name java | grep "temurin-17" | head -n 1)
+          # Ensure JDK 17 is correctly installed and set as the default
+          JAVA_PATH=$(find /usr/lib/jvm/ -maxdepth 2 -name java | grep "java-17-openjdk" | head -n 1)
           if [ -z "$JAVA_PATH" ]; then
-            echo "Error: Java 17 binary not found!"
+            echo "Error: Java 17 binary not found in /usr/lib/jvm/!"
+            ls -la /usr/lib/jvm/  # Debug: Show available JVMs
             exit 1
           fi
           sudo update-alternatives --set java "$JAVA_PATH"
-          java -version
+          java -version  # Verify the version
+          echo "JAVA_HOME=$(dirname $(dirname $JAVA_PATH))" >> $GITHUB_ENV  # Set JAVA_HOME for later steps
 
       - name: Install Python Dependencies
         run: |
