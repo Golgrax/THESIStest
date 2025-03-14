@@ -76,6 +76,13 @@ jobs:
 
       - name: Build APK
         run: |
+          # Ensure the python-for-android directory exists
+          if [ ! -d "$HOME/.buildozer/android/platform/python-for-android" ]; then
+            echo "Directory $HOME/.buildozer/android/platform/python-for-android does not exist. Attempting to clone it."
+            mkdir -p $HOME/.buildozer/android/platform/
+            cd $HOME/.buildozer/android/platform/
+            git clone --depth 1 https://github.com/kivy/python-for-android.git
+          fi
           buildozer android clean
           buildozer -v android debug
 
