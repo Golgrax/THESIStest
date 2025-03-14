@@ -51,94 +51,43 @@ jobs:
           pip install --upgrade buildozer
           buildozer --version
 
-      - name: Set up Android SDK and NDK
+      - name: Install Android SDK & NDK
         run: |
           export ANDROID_SDK_ROOT=$HOME/android-sdk
+          export ANDROID_NDK_HOME=$HOME/android-ndk/android-ndk-r25c
           export PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH
+          
           mkdir -p $ANDROID_SDK_ROOT/cmdline-tools
           cd $ANDROID_SDK_ROOT/cmdline-tools
           wget https://dl.google.com/android/repository/commandlinetools-linux-10406996_latest.zip -O cmdline-tools.zip
           unzip cmdline-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
           mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest
           rm cmdline-tools.zip
-          echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-31" "build-tools;33.0.2" "ndk;21.4.7075529"
+          
+          echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-31" "build-tools;33.0.2" "ndk;25.2.9519653"
+          
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
+          echo "ANDROID_NDK_HOME=$HOME/android-ndk/android-ndk-r25c" >> $GITHUB_ENV
+          echo "ANDROID_NDK=$HOME/android-ndk/android-ndk-r25c" >> $GITHUB_ENV
           echo "PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
 
-      - name: Patch libffi
+      - name: Modify `buildozer.spec`
         run: |
-          # Create p4a directory structure
-          mkdir -p .buildozer/android/platform
-          
-          # Clone python-for-android
-          git clone --depth 1 https://github.com/kivy/python-for-android.git .buildozer/android/platform/python-for-android
-          
-          # Create patch file to fix libffi configure.ac
-          cat > libffi_patch.diff << 'EOF'
-          diff --git a/configure.ac b/configure.ac
-          index xxxx..yyyy 100644
-          --- a/configure.ac
-          +++ b/configure.ac
-          @@ -1,5 +1,6 @@
-          AC_INIT([libffi], [3.4.4])
-          AC_CONFIG_HEADERS([fficonfig.h])
-          +LT_INIT
-          
-          m4_pattern_allow([LT_SYS_SYMBOL_USCORE])
-          EOF
-          
-          # Create script to apply patch
-          cat > patch_libffi.sh << 'EOF'
-          #!/bin/bash
-          set -e
-          if [ -d "$1" ]; then
-            cd "$1"
-            if [ -f "configure.ac" ]; then
-              echo "Patching libffi configure.ac"
-              # Add LT_INIT near the beginning and pattern_allow
-              sed -i '3i LT_INIT' configure.ac
-              sed -i '4i m4_pattern_allow([LT_SYS_SYMBOL_USCORE])' configure.ac
-              echo "Patched configure.ac"
-            else
-              echo "No configure.ac found in $1"
-            fi
+          # Ensure correct NDK path
+          if grep -q "^android.ndk_path" buildozer.spec; then
+            sed -i 's|^android.ndk_path.*|android.ndk_path = $HOME/android-ndk/android-ndk-r25c|g' buildozer.spec
           else
-            echo "Directory $1 not found"
-          fi
-          EOF
-          
-          chmod +x patch_libffi.sh
-          
-          # Create a hook to run the patch script
-          mkdir -p .buildozer/android/platform/python-for-android/pythonforandroid/recipes/libffi/
-          
-          cat > .buildozer/android/platform/python-for-android/pythonforandroid/recipes/libffi/pre_build_hook.py << 'EOF'
-          import os
-          import subprocess
-          
-          def pre_build_hook(recipe, arch):
-              print("Running libffi pre-build hook")
-              recipe_dir = recipe.get_build_dir(arch.arch)
-              patch_script = os.path.join(os.environ['GITHUB_WORKSPACE'], 'patch_libffi.sh')
-              subprocess.call([patch_script, recipe_dir])
-          EOF
-
-      - name: Modify buildozer.spec
-        run: |
-          # Remove libffi from requirements if present
-          if grep -q "libffi" buildozer.spec; then
-            sed -i 's/,libffi//g' buildozer.spec
-            echo "Removed libffi from requirements"
+            echo "android.ndk_path = $HOME/android-ndk/android-ndk-r25c" >> buildozer.spec
           fi
           
-          # Ensure we're using latest p4a
+          # Fix p4a branch
           if grep -q "^p4a.branch" buildozer.spec; then
             sed -i 's/^p4a.branch.*/p4a.branch = master/g' buildozer.spec
           else
             echo "p4a.branch = master" >> buildozer.spec
           fi
           
-          # Enable verbose output for debugging
+          # Enable verbose output
           if grep -q "^log_level" buildozer.spec; then
             sed -i 's/^log_level.*/log_level = 2/g' buildozer.spec
           else
@@ -147,7 +96,8 @@ jobs:
 
       - name: Build APK
         run: |
-          buildozer android debug
+          buildozer android clean
+          buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
