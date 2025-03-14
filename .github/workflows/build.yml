@@ -35,9 +35,18 @@ jobs:
         run: |
           pip install --upgrade Cython buildozer
           pip install git+https://github.com/kivy/python-for-android.git
+          mkdir -p $HOME/.buildozer/android/platform/  # Ensure the directory exists
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
           buildozer --version
           python3 -m pythonforandroid.toolchain --version  # Ensure p4a is installed
+
+      - name: Verify python-for-android Installation
+        run: |
+          if [ -d "$HOME/.buildozer/android/platform/" ]; then
+            ls -la $HOME/.buildozer/android/platform/
+          else
+            echo "Directory $HOME/.buildozer/android/platform/ does not exist."
+          fi
 
       - name: Set up Android SDK and NDK
         run: |
@@ -59,7 +68,11 @@ jobs:
           python --version
           pip list
           buildozer --version
-          ls -la $HOME/.buildozer/android/platform/  # Check if p4a exists
+          if [ -d "$HOME/.buildozer/android/platform/" ]; then
+            ls -la $HOME/.buildozer/android/platform/  # Check if p4a exists
+          else
+            echo "Directory $HOME/.buildozer/android/platform/ does not exist."
+          fi
 
       - name: Build APK
         run: |
