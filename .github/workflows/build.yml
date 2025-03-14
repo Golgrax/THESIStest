@@ -9,7 +9,6 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -37,17 +36,27 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install System Dependencies (Fixes `libffi`)
+      - name: Install System Dependencies
         run: |
           sudo apt update
-          sudo apt install -y pkg-config automake m4 git zip unzip python3-pip autoconf libtool libffi-dev pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libssl-dev
+          sudo apt install -y \
+            pkg-config automake m4 git zip unzip python3-pip autoconf libtool \
+            libffi-dev pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev \
+            libtinfo6 cmake libssl-dev libtool-bin
           pip install --upgrade pip setuptools
 
-      - name: Install Buildozer & python-for-android (Latest Fixes)
+      - name: Install Buildozer & Dependencies
         run: |
-          pip install --upgrade Cython buildozer
-          pip install git+https://github.com/kivy/python-for-android.git
+          pip install --upgrade Cython==0.29.36
+          pip install --upgrade buildozer
+          pip install --upgrade Kivy-Garden
+          pip install --upgrade https://github.com/kivymd/KivyMD/archive/master.zip
           buildozer --version
+
+      - name: Fix libtool
+        run: |
+          sudo apt-get install -y libtool-bin
+          sudo ln -s /usr/bin/libtoolize /usr/bin/libtool || true
 
       - name: Set up Android SDK and NDK
         run: |
@@ -63,18 +72,34 @@ jobs:
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
           echo "PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
 
-      - name: Ensure `python-for-android` Exists
+      - name: Prepare libffi fix
         run: |
-          if [ ! -d ".buildozer/android/platform/python-for-android" ]; then
-            echo "python-for-android is missing. Cloning it now..."
-            mkdir -p .buildozer/android/platform/
-            cd .buildozer/android/platform/
-            git clone --depth 1 https://github.com/kivy/python-for-android.git
+          mkdir -p $HOME/.buildozer/android/platform/
+          git clone --depth 1 https://github.com/libffi/libffi.git $HOME/libffi
+          cd $HOME/libffi
+          # Fix the libffi issue by running autoupdate
+          autoreconf -fiv
+          ./configure --enable-static --disable-shared
+          make
+          sudo make install
+          echo "export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+
+      - name: Modify buildozer.spec for libffi
+        run: |
+          # Check if libffi is in requirements and use system libffi instead
+          if grep -q "libffi" buildozer.spec; then
+            sed -i 's/,libffi//g' buildozer.spec
+            echo "Modified buildozer.spec to use system libffi"
           fi
 
-      - name: Build APK (Fix `libffi` issue)
+      - name: Clean previous builds
         run: |
-          buildozer android clean
+          rm -rf .buildozer || true
+          rm -rf bin || true
+
+      - name: Build APK
+        run: |
+          export USE_SYSTEM_FFI=1
           buildozer -v android debug
 
       - name: Upload APK
