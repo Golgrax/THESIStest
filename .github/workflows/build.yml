@@ -46,25 +46,11 @@ jobs:
           echo "ANDROIDNDK=$HOME/android-ndk-r25b" >> $GITHUB_ENV
           echo "PATH=$HOME/android-ndk-r25b:$PATH" >> $GITHUB_ENV
 
-      - name: Configure Buildozer
-        run: |
-          if [ ! -f buildozer.spec ]; then
-            buildozer init
-            sed -i 's/log_level = 1/log_level = 2/' buildozer.spec
-            sed -i 's/requirements = .*/requirements = python3,kivy,kivymd,opencv-python-headless,tflite-runtime,requests,numpy,pillow,ultralytics,libffi==3.4.4/' buildozer.spec
-            sed -i 's/android.ndk = .*/android.ndk = 25b/' buildozer.spec
-            sed -i 's/android.api = .*/android.api = 31/' buildozer.spec
-            sed -i 's/android.minapi = .*/android.minapi = 21/' buildozer.spec
-          fi
-
       - name: Patch libffi Recipe (Workaround)
         run: |
-          # Create a custom recipe directory
           mkdir -p ~/.local/share/python-for-android/recipes/libffi
-          # Download a newer libffi source (3.4.4)
           wget -q https://github.com/libffi/libffi/releases/download/v3.4.4/libffi-3.4.4.tar.gz
           tar -xzf libffi-3.4.4.tar.gz -C ~/.local/share/python-for-android/recipes/libffi --strip-components=1
-          # Create a recipe file
           cat > ~/.local/share/python-for-android/recipes/libffi/__init__.py << 'EOF'
           from pythonforandroid.recipe import CythonRecipe
           from pythonforandroid.toolchain import shprint
@@ -88,13 +74,29 @@ jobs:
 
           recipe = LibffiRecipe()
           EOF
-          # Set the recipe path environment variable
+          # Replace {path} with the actual path
+          sed -i "s|{path}|$HOME/.local/share/python-for-android/recipes/libffi|g" ~/.local/share/python-for-android/recipes/libffi/__init__.py
           echo "P4A_RECIPE_DIRS=$HOME/.local/share/python-for-android/recipes" >> $GITHUB_ENV
+
+      - name: Configure Buildozer
+        run: |
+          if [ ! -f buildozer.spec ]; then
+            buildozer init
+          fi
+          # Ensure the spec uses the correct libffi version and recipe path
+          sed -i 's/requirements = .*/requirements = python3,kivy,kivymd,opencv-python-headless,tflite-runtime,requests,numpy,pillow,ultralytics,libffi==3.4.4/' buildozer.spec
+          sed -i 's/android.ndk = .*/android.ndk = 25b/' buildozer.spec
+          sed -i 's/android.api = .*/android.api = 31/' buildozer.spec
+          sed -i 's/android.minapi = .*/android.minapi = 21/' buildozer.spec
+          sed -i 's/log_level = .*/log_level = 2/' buildozer.spec
+          # Remove hardcoded p4a.extra_args to avoid conflicts
+          sed -i '/p4a.extra_args/d' buildozer.spec
+          echo "p4a.local_recipes = $HOME/.local/share/python-for-android/recipes" >> buildozer.spec
 
       - name: Build APK with Buildozer
         run: |
           rm -rf .buildozer/android/platform/build*
-          buildozer -v android debug --storage-dir=.buildozer/android/platform/build
+          buildozer -v android debug
         env:
           ANDROIDNDK: ${{ env.ANDROIDNDK }}
 
