@@ -40,20 +40,29 @@ jobs:
           rm -rf ~/.local/lib/python*/site-packages/Cython*
           rm -rf ~/android-sdk
           rm -rf ~/.kivy
+          echo "Deleted all cached Buildozer files to ensure a clean installation."
 
       - name: Install Buildozer & python-for-android
         run: |
-          pip install --upgrade Cython buildozer python-for-android
+          pip install --upgrade Cython buildozer
+          pip install git+https://github.com/kivy/python-for-android.git
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
           buildozer --version
           python3 -m pythonforandroid.toolchain --version  # Ensure p4a is installed
 
-      - name: Forcefully Create Missing Buildozer Directories
+      - name: Manually Install `python-for-android` in Buildozer Directory
         run: |
           mkdir -p $HOME/.buildozer/android/platform/
-          mkdir -p $HOME/.buildozer/android/app
-          mkdir -p $HOME/.buildozer/android/platform/build-arm64-v8a_armeabi-v7a
-          echo "Force Created Buildozer Android Platform Directory"
+          cd $HOME/.buildozer/android/platform/
+          git clone --depth 1 https://github.com/kivy/python-for-android.git
+          cd python-for-android
+          pip install -e .
+          echo "Successfully installed python-for-android in Buildozer platform directory."
+
+      - name: Verify python-for-android
+        run: |
+          ls -la $HOME/.buildozer/android/platform/
+          python3 -m pythonforandroid.toolchain --version
 
       - name: Set up Android SDK and NDK
         run: |
@@ -75,7 +84,6 @@ jobs:
           python --version
           pip list
           buildozer --version
-          python3 -m pythonforandroid.toolchain --version  # Check p4a is installed
           ls -la $HOME/.buildozer/android/platform/  # Check if p4a exists
 
       - name: Build APK
