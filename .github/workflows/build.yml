@@ -35,7 +35,6 @@ jobs:
 
       - name: Install Buildozer Requirements
         run: |
-          cd buildozer
           pip3 install -r requirements.txt
 
       - name: Build APK with Buildozer
