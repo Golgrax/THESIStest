@@ -1,4 +1,4 @@
-name: Build Petwatch Kivy APK
+name: Build PetWatch Kivy APK
 
 on:
   push:
@@ -22,7 +22,6 @@ jobs:
           pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 \
           cmake libffi-dev libssl-dev
 
-
       - name: Install Python Dependencies
         run: |
           pip3 install --user --upgrade Cython==0.29.33 virtualenv
@@ -36,19 +35,15 @@ jobs:
 
       - name: Install Buildozer Requirements
         run: |
-          pip3 install -r ./requirements.txt
+          cd buildozer
+          pip3 install -r requirements.txt
 
       - name: Build APK with Buildozer
         run: |
           buildozer -v android debug
 
-      - name: Build Python Project
-        run: |
-          python setup.py build
-          pip install -e .
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Kivy-APK
-          path: THESIS/bin/*.apk
+          name: PetWatch-APK
+          path: bin/*.apk
