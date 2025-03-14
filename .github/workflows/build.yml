@@ -29,6 +29,7 @@ jobs:
             exit 1
           else
             echo "✅ buildozer.spec found. Proceeding with the build."
+          fi  # <-- This was missing
 
       - name: Set up Java 17
         uses: actions/setup-java@v3
