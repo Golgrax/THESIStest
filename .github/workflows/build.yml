@@ -36,7 +36,7 @@ jobs:
 
       - name: Install Buildozer Requirements
         run: |
-          pip3 install -r THESIS/requirements.txt
+          pip3 install -r ./requirements.txt
 
       - name: Clean Buildozer Cache (Fix)
         run: |
