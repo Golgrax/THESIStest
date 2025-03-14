@@ -3,8 +3,8 @@ name: Build Petwatch Kivy APK
 on:
   push:
     branches:
-      - main  # Change if your branch is different
-  workflow_dispatch:  # Allows manual triggering
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
@@ -13,12 +13,31 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1  # Ensure full repository is pulled
+
+      - name: Debug Workspace
+        run: |
+          echo "Current working directory:"
+          pwd  # Print the current directory
+          echo "Listing all files in the workspace:"
+          ls -la  # Show all files, including hidden ones
+
+      - name: Ensure `buildozer.spec` Exists
+        run: |
+          if [ ! -f "buildozer.spec" ]; then
+            echo "❌ ERROR: buildozer.spec file is missing! Make sure it is in the root of the repository."
+            exit 1
+          else
+            echo "✅ buildozer.spec found. Proceeding with the build."
+            cat buildozer.spec  # Display the file for debugging
+          fi
 
       - name: Set up Java 17
         uses: actions/setup-java@v3
         with:
           java-version: '17'
-          distribution: 'temurin'  # Use the Temurin distribution
+          distribution: 'temurin'
 
       - name: Install system dependencies
         run: |
@@ -26,27 +45,19 @@ jobs:
           sudo apt install -y pkg-config automake m4 git zip unzip python3-pip autoconf libtool libffi-dev pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libssl-dev
           pip install --upgrade pip setuptools
 
-      - name: Remove Buildozer Cache (Fix FileNotFoundError)
+      - name: Remove Buildozer Cache
         run: |
           rm -rf ~/.buildozer
-          echo "Deleted all cached Buildozer files to ensure a clean installation."
+          echo "Deleted all cached Buildozer files."
 
       - name: Install Buildozer & python-for-android
         run: |
           pip install --upgrade Cython buildozer
           pip install git+https://github.com/kivy/python-for-android.git
-          mkdir -p $HOME/.buildozer/android/platform/  # Ensure the directory exists
+          mkdir -p $HOME/.buildozer/android/platform/
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
           buildozer --version
-          python3 -m pythonforandroid.toolchain --version  # Ensure p4a is installed
-
-      - name: Verify python-for-android Installation
-        run: |
-          if [ -d "$HOME/.buildozer/android/platform/" ]; then
-            ls -la $HOME/.buildozer/android/platform/
-          else
-            echo "Directory $HOME/.buildozer/android/platform/ does not exist."
-          fi
+          python3 -m pythonforandroid.toolchain --version
 
       - name: Set up Android SDK and NDK
         run: |
@@ -58,7 +69,7 @@ jobs:
           unzip cmdline-tools.zip -d $ANDROID_SDK_ROOT/cmdline-tools
           mv $ANDROID_SDK_ROOT/cmdline-tools/cmdline-tools $ANDROID_SDK_ROOT/cmdline-tools/latest
           rm cmdline-tools.zip
-          echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-31" "build-tools;33.0.2" "ndk;21.4.7075529"  # Update NDK version if necessary
+          echo "y" | $ANDROID_SDK_ROOT/cmdline-tools/latest/bin/sdkmanager --install "platforms;android-31" "build-tools;33.0.2" "ndk;21.4.7075529"
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
           echo "PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
 
@@ -68,15 +79,13 @@ jobs:
           python --version
           pip list
           buildozer --version
-          if [ -d "$HOME/.buildozer/android/platform/" ]; then
-            ls -la $HOME/.buildozer/android/platform/  # Check if p4a exists
-          else
-            echo "Directory $HOME/.buildozer/android/platform/ does not exist."
-          fi
+          ls -la $HOME/.buildozer/android/platform/
 
       - name: Build APK
         run: |
-          # Ensure the python-for-android directory exists
+          echo "Changing directory to the repository root..."
+          cd $GITHUB_WORKSPACE  # Explicitly set working directory
+          
           if [ ! -d "$HOME/.buildozer/android/platform/python-for-android" ]; then
             echo "Directory $HOME/.buildozer/android/platform/python-for-android does not exist. Attempting to clone it."
             mkdir -p $HOME/.buildozer/android/platform/
