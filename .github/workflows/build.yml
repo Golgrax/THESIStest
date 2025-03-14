@@ -49,14 +49,7 @@ jobs:
         run: |
           pip install --upgrade Cython==0.29.36
           pip install --upgrade buildozer
-          pip install --upgrade Kivy-Garden
-          pip install --upgrade https://github.com/kivymd/KivyMD/archive/master.zip
           buildozer --version
-
-      - name: Fix libtool
-        run: |
-          sudo apt-get install -y libtool-bin
-          sudo ln -s /usr/bin/libtoolize /usr/bin/libtool || true
 
       - name: Set up Android SDK and NDK
         run: |
@@ -72,35 +65,89 @@ jobs:
           echo "ANDROID_SDK_ROOT=$ANDROID_SDK_ROOT" >> $GITHUB_ENV
           echo "PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
 
-      - name: Prepare libffi fix
+      - name: Patch libffi
         run: |
-          mkdir -p $HOME/.buildozer/android/platform/
-          git clone --depth 1 https://github.com/libffi/libffi.git $HOME/libffi
-          cd $HOME/libffi
-          # Fix the libffi issue by running autoupdate
-          autoreconf -fiv
-          ./configure --enable-static --disable-shared
-          make
-          sudo make install
-          echo "export PKG_CONFIG_PATH=/usr/local/lib/pkgconfig:$PKG_CONFIG_PATH" >> $GITHUB_ENV
+          # Create p4a directory structure
+          mkdir -p .buildozer/android/platform
+          
+          # Clone python-for-android
+          git clone --depth 1 https://github.com/kivy/python-for-android.git .buildozer/android/platform/python-for-android
+          
+          # Create patch file to fix libffi configure.ac
+          cat > libffi_patch.diff << 'EOF'
+          diff --git a/configure.ac b/configure.ac
+          index xxxx..yyyy 100644
+          --- a/configure.ac
+          +++ b/configure.ac
+          @@ -1,5 +1,6 @@
+          AC_INIT([libffi], [3.4.4])
+          AC_CONFIG_HEADERS([fficonfig.h])
+          +LT_INIT
+          
+          m4_pattern_allow([LT_SYS_SYMBOL_USCORE])
+          EOF
+          
+          # Create script to apply patch
+          cat > patch_libffi.sh << 'EOF'
+          #!/bin/bash
+          set -e
+          if [ -d "$1" ]; then
+            cd "$1"
+            if [ -f "configure.ac" ]; then
+              echo "Patching libffi configure.ac"
+              # Add LT_INIT near the beginning and pattern_allow
+              sed -i '3i LT_INIT' configure.ac
+              sed -i '4i m4_pattern_allow([LT_SYS_SYMBOL_USCORE])' configure.ac
+              echo "Patched configure.ac"
+            else
+              echo "No configure.ac found in $1"
+            fi
+          else
+            echo "Directory $1 not found"
+          fi
+          EOF
+          
+          chmod +x patch_libffi.sh
+          
+          # Create a hook to run the patch script
+          mkdir -p .buildozer/android/platform/python-for-android/pythonforandroid/recipes/libffi/
+          
+          cat > .buildozer/android/platform/python-for-android/pythonforandroid/recipes/libffi/pre_build_hook.py << 'EOF'
+          import os
+          import subprocess
+          
+          def pre_build_hook(recipe, arch):
+              print("Running libffi pre-build hook")
+              recipe_dir = recipe.get_build_dir(arch.arch)
+              patch_script = os.path.join(os.environ['GITHUB_WORKSPACE'], 'patch_libffi.sh')
+              subprocess.call([patch_script, recipe_dir])
+          EOF
 
-      - name: Modify buildozer.spec for libffi
+      - name: Modify buildozer.spec
         run: |
-          # Check if libffi is in requirements and use system libffi instead
+          # Remove libffi from requirements if present
           if grep -q "libffi" buildozer.spec; then
             sed -i 's/,libffi//g' buildozer.spec
-            echo "Modified buildozer.spec to use system libffi"
+            echo "Removed libffi from requirements"
           fi
-
-      - name: Clean previous builds
-        run: |
-          rm -rf .buildozer || true
-          rm -rf bin || true
+          
+          # Ensure we're using latest p4a
+          if grep -q "^p4a.branch" buildozer.spec; then
+            sed -i 's/^p4a.branch.*/p4a.branch = master/g' buildozer.spec
+          else
+            echo "p4a.branch = master" >> buildozer.spec
+          fi
+          
+          # Enable verbose output for debugging
+          if grep -q "^log_level" buildozer.spec; then
+            sed -i 's/^log_level.*/log_level = 2/g' buildozer.spec
+          else
+            echo "log_level = 2" >> buildozer.spec
+          fi
 
       - name: Build APK
         run: |
-          export USE_SYSTEM_FFI=1
-          buildozer -v android debug
+          buildozer android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
