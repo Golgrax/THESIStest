@@ -108,7 +108,7 @@ android.permissions = android.permission.INTERNET,android.permission.CAMERA,andr
 #android.sdk = 20
 
 #(str) Android NDK version to use
-android.ndk = 25b
+android.ndk = 23c
 
 #(int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
 #android.ndk_api = 21
@@ -347,7 +347,7 @@ android.allow_backup = True
 #p4a.setup_py = false
 
 # (str) extra command line arguments to pass when invoking pythonforandroid.toolchain
-#p4a.extra_args =
+#p4a.extra_args = --requirements=libffi
 
 
 
