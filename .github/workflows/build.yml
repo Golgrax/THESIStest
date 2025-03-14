@@ -24,7 +24,13 @@ jobs:
 
       - name: Set Java Version
         run: |
-          sudo update-alternatives --set java $(update-java-alternatives -l | grep 17 | awk '{print $3}') 
+          # Find the path to the java binary for JDK 17
+          JAVA_PATH=$(find /usr/lib/jvm/ -maxdepth 2 -name java | grep "temurin-17" | head -n 1)
+          if [ -z "$JAVA_PATH" ]; then
+            echo "Error: Java 17 binary not found!"
+            exit 1
+          fi
+          sudo update-alternatives --set java "$JAVA_PATH"
           java -version
 
       - name: Install Python Dependencies
