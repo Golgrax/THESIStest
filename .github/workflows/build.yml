@@ -71,6 +71,16 @@ jobs:
           echo "ANDROID_NDK=$HOME/android-ndk/android-ndk-r25c" >> $GITHUB_ENV
           echo "PATH=$ANDROID_SDK_ROOT/cmdline-tools/latest/bin:$ANDROID_SDK_ROOT/tools/bin:$ANDROID_SDK_ROOT/platform-tools:$PATH" >> $GITHUB_ENV
 
+      - name: Ensure `python-for-android` is Installed
+        run: |
+          mkdir -p .buildozer/android/platform
+          if [ ! -d ".buildozer/android/platform/python-for-android" ]; then
+            echo "📥 Cloning python-for-android..."
+            git clone --depth 1 https://github.com/kivy/python-for-android.git .buildozer/android/platform/python-for-android
+          else
+            echo "✅ python-for-android already exists."
+          fi
+
       - name: Modify `buildozer.spec`
         run: |
           # Ensure correct NDK path
@@ -94,9 +104,12 @@ jobs:
             echo "log_level = 2" >> buildozer.spec
           fi
 
-      - name: Build APK
+      - name: Clean Buildozer Cache
         run: |
           buildozer android clean
+          
+      - name: Build APK
+        run: |
           buildozer -v android debug
 
       - name: Upload APK
