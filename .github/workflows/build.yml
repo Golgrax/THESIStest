@@ -16,20 +16,22 @@ jobs:
         with:
           fetch-depth: 1  # Ensure full repository is pulled
 
-      - name: Debug Workspace
+      - name: Move to THESIS Directory & Debug Files
         run: |
+          cd THESIS
           echo "Current working directory:"
-          pwd  # Print the current directory
-          echo "Listing all files in the workspace:"
-          ls -la  # Show all files, including hidden ones
+          pwd  # Confirm working directory is correct
+          echo "Listing all files in THESIS/:"
+          ls -la  # Ensure buildozer.spec is there
 
-      - name: Ensure `buildozer.spec` Exists
+      - name: Ensure `buildozer.spec` Exists in THESIS/
         run: |
+          cd THESIS
           if [ ! -f "buildozer.spec" ]; then
-            echo "❌ ERROR: buildozer.spec file is missing! Make sure it is in the root of the repository."
+            echo "❌ ERROR: buildozer.spec file is missing in THESIS/. Make sure it is committed."
             exit 1
           else
-            echo "✅ buildozer.spec found. Proceeding with the build."
+            echo "✅ buildozer.spec found in THESIS/. Proceeding with the build."
             cat buildozer.spec  # Display the file for debugging
           fi
 
@@ -45,16 +47,18 @@ jobs:
           sudo apt install -y pkg-config automake m4 git zip unzip python3-pip autoconf libtool libffi-dev pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libssl-dev
           pip install --upgrade pip setuptools
 
-      - name: Remove Buildozer Cache
+      - name: Remove Buildozer Cache (Inside THESIS/)
         run: |
-          rm -rf ~/.buildozer
-          echo "Deleted all cached Buildozer files."
+          cd THESIS
+          rm -rf .buildozer
+          echo "Deleted all cached Buildozer files inside THESIS/."
 
-      - name: Install Buildozer & python-for-android
+      - name: Install Buildozer & python-for-android (Inside THESIS/)
         run: |
+          cd THESIS
           pip install --upgrade Cython buildozer
           pip install git+https://github.com/kivy/python-for-android.git
-          mkdir -p $HOME/.buildozer/android/platform/
+          mkdir -p .buildozer/android/platform/
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
           buildozer --version
           python3 -m pythonforandroid.toolchain --version
@@ -79,19 +83,20 @@ jobs:
           python --version
           pip list
           buildozer --version
-          ls -la $HOME/.buildozer/android/platform/
+          ls -la THESIS/.buildozer/android/platform/
 
-      - name: Build APK
+      - name: Build APK (Inside THESIS/)
         run: |
-          echo "Changing directory to the repository root..."
-          cd $GITHUB_WORKSPACE  # Explicitly set working directory
-          
-          if [ ! -d "$HOME/.buildozer/android/platform/python-for-android" ]; then
-            echo "Directory $HOME/.buildozer/android/platform/python-for-android does not exist. Attempting to clone it."
-            mkdir -p $HOME/.buildozer/android/platform/
-            cd $HOME/.buildozer/android/platform/
+          cd THESIS  # Ensure we are inside THESIS/
+
+          if [ ! -d ".buildozer/android/platform/python-for-android" ]; then
+            echo "Directory .buildozer/android/platform/python-for-android does not exist. Attempting to clone it."
+            mkdir -p .buildozer/android/platform/
+            cd .buildozer/android/platform/
             git clone --depth 1 https://github.com/kivy/python-for-android.git
           fi
+
+          echo "Running Buildozer from THESIS/"
           buildozer android clean
           buildozer -v android debug
 
@@ -99,4 +104,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Kivy-APK
-          path: bin/*.apk
+          path: THESIS/bin/*.apk
