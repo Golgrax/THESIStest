@@ -30,25 +30,30 @@ jobs:
           sudo apt install -y git zip unzip python3-pip autoconf libtool libffi-dev pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libssl-dev
           pip install --upgrade pip setuptools
 
+      - name: Remove Buildozer Cache (Fix FileNotFoundError)
+        run: |
+          rm -rf ~/.buildozer
+          rm -rf ~/.local/bin/buildozer
+          rm -rf ~/.local/lib/python*/site-packages/buildozer*
+          rm -rf ~/.local/lib/python*/site-packages/pythonforandroid*
+          rm -rf ~/.local/lib/python*/site-packages/p4a*
+          rm -rf ~/.local/lib/python*/site-packages/Cython*
+          rm -rf ~/android-sdk
+          rm -rf ~/.kivy
+
       - name: Install Buildozer & python-for-android
         run: |
-          pip install --upgrade Cython buildozer
+          pip install --upgrade Cython buildozer python-for-android
           echo "PATH=$HOME/.local/bin:$PATH" >> $GITHUB_ENV
           buildozer --version
+          python3 -m pythonforandroid.toolchain --version  # Ensure p4a is installed
 
-      - name: Manually Install python-for-android
+      - name: Forcefully Create Missing Buildozer Directories
         run: |
           mkdir -p $HOME/.buildozer/android/platform/
-          cd $HOME/.buildozer/android/platform/
-          git clone --depth 1 https://github.com/kivy/python-for-android.git
-          cd python-for-android
-          git checkout develop
-          pip install -e .
-
-      - name: Verify python-for-android
-        run: |
-          ls -la $HOME/.buildozer/android/platform/
-          python3 -m pythonforandroid.toolchain --version
+          mkdir -p $HOME/.buildozer/android/app
+          mkdir -p $HOME/.buildozer/android/platform/build-arm64-v8a_armeabi-v7a
+          echo "Force Created Buildozer Android Platform Directory"
 
       - name: Set up Android SDK and NDK
         run: |
@@ -70,6 +75,7 @@ jobs:
           python --version
           pip list
           buildozer --version
+          python3 -m pythonforandroid.toolchain --version  # Check p4a is installed
           ls -la $HOME/.buildozer/android/platform/  # Check if p4a exists
 
       - name: Build APK
