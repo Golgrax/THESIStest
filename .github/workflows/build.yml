@@ -29,7 +29,6 @@ jobs:
           pip install --upgrade pip setuptools
 
       - name: Install Buildozer & python-for-android
-        working-directory: THESIS
         run: |
           pip install --upgrade Cython buildozer
           pip install git+https://github.com/kivy/python-for-android.git
