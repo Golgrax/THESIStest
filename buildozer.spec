@@ -94,7 +94,7 @@ icon.adaptive_background.filename = %(source.dir)s/data/icon_bg.png
 
 # (list) Permissions
 # (See https://python-for-android.readthedocs.io/en/latest/buildoptions/#build-options-1 for all the supported syntaxes and properties)
-android.permissions = android.permission.INTERNET,android.permission.CAMERA,android.permission.ACCESS_NETWORK_STATE,android.permission.WRITE_EXTERNAL_STORAGE
+android.permissions = INTERNET,CAMERA,ACCESS_NETWORK_STATE,WRITE_EXTERNAL_STORAGE
 # (list) features (adds uses-feature -tags to manifest)
 android.features = android.hardware.usb.host
 
@@ -108,7 +108,7 @@ android.minapi = 21
 android.sdk = 20
 
 #(str) Android NDK version to use
-android.ndk = 25b
+android.ndk = 25.2.9519653
 
 #(int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
 android.ndk_api = 21
