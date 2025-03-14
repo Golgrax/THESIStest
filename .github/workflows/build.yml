@@ -16,26 +16,19 @@ jobs:
         with:
           fetch-depth: 1  # Ensure full repository is pulled
 
-      - name: Debug Working Directory
+      - name: Debug Repository Files
         run: |
           echo "Current working directory: $(pwd)"
-          echo "Files in workspace:"
+          echo "Files in the repository root:"
           ls -la
-          
-          if [ -d "THESIS" ]; then
-            echo "✅ THESIS directory found."
-          else
-            echo "❌ ERROR: THESIS directory not found! Verify the repository structure."
-            exit 1
-          fi
 
-      - name: Ensure `buildozer.spec` Exists
+      - name: Ensure `buildozer.spec` Exists in Root
         run: |
-          if [ ! -f "THESIS/buildozer.spec" ]; then
-            echo "❌ ERROR: buildozer.spec is missing in THESIS/. Make sure it's committed."
+          if [ ! -f "buildozer.spec" ]; then
+            echo "❌ ERROR: buildozer.spec is missing in the repository root! Make sure it's committed."
             exit 1
           else
-            echo "✅ buildozer.spec found in THESIS/. Proceeding with the build."
+            echo "✅ buildozer.spec found. Proceeding with the build."
 
       - name: Set up Java 17
         uses: actions/setup-java@v3
@@ -51,7 +44,6 @@ jobs:
 
       - name: Install Buildozer & python-for-android
         run: |
-          cd THESIS
           pip install --upgrade Cython buildozer
           pip install git+https://github.com/kivy/python-for-android.git
           buildozer --version
@@ -72,15 +64,15 @@ jobs:
 
       - name: Ensure `python-for-android` Exists
         run: |
-          cd THESIS/.buildozer/android/platform/
-          if [ ! -d "python-for-android" ]; then
+          if [ ! -d ".buildozer/android/platform/python-for-android" ]; then
             echo "python-for-android is missing. Cloning it now..."
+            mkdir -p .buildozer/android/platform/
+            cd .buildozer/android/platform/
             git clone --depth 1 https://github.com/kivy/python-for-android.git
           fi
 
       - name: Build APK
         run: |
-          cd THESIS
           buildozer android clean
           buildozer -v android debug
 
@@ -88,4 +80,4 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Kivy-APK
-          path: THESIS/bin/*.apk
+          path: bin/*.apk
