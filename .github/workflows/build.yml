@@ -37,7 +37,7 @@ jobs:
           java-version: '17'
           distribution: 'temurin'
 
-      - name: Install System Dependencies (Fixes libffi)
+      - name: Install System Dependencies (Fixes `libffi`)
         run: |
           sudo apt update
           sudo apt install -y pkg-config automake m4 git zip unzip python3-pip autoconf libtool libffi-dev pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libssl-dev
@@ -72,7 +72,7 @@ jobs:
             git clone --depth 1 https://github.com/kivy/python-for-android.git
           fi
 
-      - name: Build APK (Fix libffi issue)
+      - name: Build APK (Fix `libffi` issue)
         run: |
           buildozer android clean
           buildozer -v android debug
