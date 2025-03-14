@@ -51,18 +51,50 @@ jobs:
           if [ ! -f buildozer.spec ]; then
             buildozer init
             sed -i 's/log_level = 1/log_level = 2/' buildozer.spec
-            sed -i 's/requirements = .*/requirements = python3,kivy,kivymd,opencv-python-headless,tflite-runtime,requests,numpy,pillow,ultralytics,libffi==3.4.2/' buildozer.spec
+            sed -i 's/requirements = .*/requirements = python3,kivy,kivymd,opencv-python-headless,tflite-runtime,requests,numpy,pillow,ultralytics,libffi==3.4.4/' buildozer.spec
             sed -i 's/android.ndk = .*/android.ndk = 25b/' buildozer.spec
-            # Ensure minimum API compatibility
             sed -i 's/android.api = .*/android.api = 31/' buildozer.spec
             sed -i 's/android.minapi = .*/android.minapi = 21/' buildozer.spec
           fi
 
+      - name: Patch libffi Recipe (Workaround)
+        run: |
+          # Create a custom recipe directory
+          mkdir -p ~/.local/share/python-for-android/recipes/libffi
+          # Download a newer libffi source (3.4.4)
+          wget -q https://github.com/libffi/libffi/releases/download/v3.4.4/libffi-3.4.4.tar.gz
+          tar -xzf libffi-3.4.4.tar.gz -C ~/.local/share/python-for-android/recipes/libffi --strip-components=1
+          # Create a recipe file
+          cat > ~/.local/share/python-for-android/recipes/libffi/__init__.py << 'EOF'
+          from pythonforandroid.recipe import CythonRecipe
+          from pythonforandroid.toolchain import shprint
+          import sh
+
+          class LibffiRecipe(CythonRecipe):
+              version = '3.4.4'
+              url = 'file://{path}/libffi-3.4.4.tar.gz'
+              depends = []
+              call_hostpython_via_targetpython = False
+
+              def build_arch(self, arch):
+                  env = self.get_recipe_env(arch)
+                  shprint(sh.Command('./configure'), 
+                          '--host=' + arch.triple, 
+                          '--prefix=' + self.ctx.get_python_install_dir(), 
+                          '--disable-static', 
+                          '--enable-shared', 
+                          _env=env)
+                  shprint(sh.make, '-j4', _env=env)
+
+          recipe = LibffiRecipe()
+          EOF
+          # Set the recipe path environment variable
+          echo "P4A_RECIPE_DIRS=$HOME/.local/share/python-for-android/recipes" >> $GITHUB_ENV
+
       - name: Build APK with Buildozer
         run: |
-          # Clear previous build cache to avoid conflicts
           rm -rf .buildozer/android/platform/build*
-          buildozer -v android debug
+          buildozer -v android debug --storage-dir=.buildozer/android/platform/build
         env:
           ANDROIDNDK: ${{ env.ANDROIDNDK }}
 
