@@ -38,10 +38,6 @@ jobs:
         run: |
           pip3 install -r ./requirements.txt
 
-      - name: Clean Buildozer Cache (Fix)
-        run: |
-          ~/.local/bin/buildozer android clean  # 🔹 This should now work correctly
-
       - name: Build APK with Buildozer
         run: |
           cd THESIS
