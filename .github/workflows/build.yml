@@ -40,12 +40,10 @@ jobs:
 
       - name: Build APK with Buildozer
         run: |
-          cd THESIS
-          ~/.local/bin/buildozer -v android debug
+          buildozer -v android debug
 
       - name: Build Python Project
         run: |
-          cd THESIS
           python setup.py build
           pip install -e .
 
