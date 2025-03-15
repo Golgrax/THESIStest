@@ -3,7 +3,7 @@ name: Build Kivy APK
 on:
   push:
     branches:
-      - main  # Change to your branch name if different
+      - main  # Change to your branch if needed
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
@@ -21,20 +21,22 @@ jobs:
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config \
                               zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev \
                               libjpeg-dev libsdl2-dev
-          sudo apt install -y autoconf automake libtool
-          sudo apt install -y libffi-dev
-
-
-
+          sudo apt install -y autoconf automake libtool libffi-dev
+      
       - name: Install Python dependencies
         run: |
           pip3 install --user --upgrade Cython==0.29.33 virtualenv buildozer python-for-android
 
+      - name: Initialize Buildozer (if missing)
+        run: |
+          if [ ! -f "buildozer.spec" ]; then
+            buildozer init
+          fi
+
       - name: Build APK with Buildozer
         run: |
           set -e
-          cd $GITHUB_WORKSPACE
-          buildozer android debug
+          buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
