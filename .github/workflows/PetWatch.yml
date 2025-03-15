@@ -3,7 +3,7 @@ name: Build Kivy APK
 on:
   push:
     branches:
-      - main  # Change to your branch name if different
+      - main  # Change to your branch if needed
   workflow_dispatch:  # Allows manual triggering
 
 jobs:
@@ -21,18 +21,50 @@ jobs:
           sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config \
                               zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev \
                               libjpeg-dev libsdl2-dev
-          sudo apt install -y autoconf automake libtool
-
+          # Ensure latest autoconf and libtool to avoid macro issues
+          sudo apt install -y autoconf automake libtool libffi-dev
 
       - name: Install Python dependencies
         run: |
-          pip3 install --user --upgrade Cython==0.29.33 virtualenv buildozer python-for-android
+          python3 -m pip install --user --upgrade Cython==0.29.33 virtualenv buildozer python-for-android
+
+      - name: Set up Android NDK
+        run: |
+          set -e
+          # Create the directory structure for Buildozer
+          mkdir -p $HOME/.buildozer/android/platform
+          # Install a specific NDK version known to work with Buildozer (e.g., r25b)
+          wget -q https://dl.google.com/android/repository/android-ndk-r25b-linux.zip -O android-ndk.zip
+          unzip -q android-ndk.zip -d $HOME/.buildozer/android/platform
+          rm android-ndk.zip
+          echo "ANDROIDNDK=$HOME/.buildozer/android/platform/android-ndk-r25b" >> $GITHUB_ENV
+
+      - name: Initialize Buildozer (if missing)
+        run: |
+          if [ ! -f "buildozer.spec" ]; then
+            buildozer init
+          fi
+          # Ensure log_level is set to 2 and NDK version is specified
+          sed -i 's/log_level = 1/log_level = 2/' buildozer.spec
+          sed -i 's/#android.ndk = .*/android.ndk = 25b/' buildozer.spec
+
+      - name: Patch libffi recipe (if needed)
+        run: |
+          set -e
+          # Check if libffi recipe exists and patch it to use a newer version
+          LIBFFI_RECIPE="$HOME/.local/lib/python3.*/site-packages/pythonforandroid/recipes/libffi/__init__.py"
+          if ls $LIBFFI_RECIPE 2>/dev/null; then
+            sed -i 's/version = "[0-9.]*"/version = "3.4.4"/' $LIBFFI_RECIPE
+            sed -i 's|url = ".*"|url = "https://github.com/libffi/libffi/releases/download/v{version}/libffi-{version}.tar.gz"|' $LIBFFI_RECIPE
+            echo "Updated libffi recipe to version 3.4.4"
+          else
+            echo "libffi recipe not found, assuming it's handled by python-for-android"
+          fi
 
       - name: Build APK with Buildozer
         run: |
           set -e
-          cd $GITHUB_WORKSPACE
-          buildozer android debug
+          buildozer -v android debug
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
