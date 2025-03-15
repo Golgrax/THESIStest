@@ -22,6 +22,8 @@ jobs:
                               zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 cmake libffi-dev libssl-dev \
                               libjpeg-dev libsdl2-dev
           sudo apt install -y autoconf automake libtool
+          sudo apt install -y libffi-dev
+
 
 
       - name: Install Python dependencies
