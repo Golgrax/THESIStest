@@ -1,6 +1,7 @@
 import os
 if 'ANDROID_AUGMENT' in os.environ:
     import cv2
+    import torch
     import pytz
     import tensorflow.lite as tflite
     import requests
@@ -9,6 +10,7 @@ if 'ANDROID_AUGMENT' in os.environ:
     import queue
     from datetime import datetime
     from PIL import Image 
+    from ultralytics import YOLO
     from kivy.graphics.texture import Texture
     from kivy.core.text import LabelBase
     from kivy.uix.screenmanager import ScreenManager, Screen
@@ -36,6 +38,7 @@ if 'ANDROID_AUGMENT' in os.environ:
 
 else:
     import cv2
+    import torch
     import pytz
     import tensorflow.lite as tflite
     import requests
@@ -44,6 +47,7 @@ else:
     import queue
     from datetime import datetime
     from PIL import Image 
+    from ultralytics import YOLO
     from kivy.graphics.texture import Texture
     from kivy.core.text import LabelBase
     from kivy.uix.screenmanager import ScreenManager, Screen
