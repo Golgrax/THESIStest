@@ -1,52 +1,121 @@
-name: Build Kivy APK
+name: Build PetWatch Kivy APK
 
 on:
   push:
     branches:
-      - main  # Change to your branch name if different
-  workflow_dispatch:  # Allows manual triggering
+      - main
+  workflow_dispatch:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
-
+    runs-on: ubuntu-24.04
     steps:
-      - name: Checkout repository
+      - name: Checkout Repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
 
-      - name: Install dependencies
+      - name: Install System Dependencies
         run: |
           sudo apt update
-          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config \
-                              zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
-          pip3 install --user --upgrade Cython==0.29.33 virtualenv
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf automake libtool \
+            pkg-config zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo6 \
+            cmake libffi-dev libssl-dev libsqlite3-dev libjpeg-dev libsdl2-dev
 
-      - name: Clone repositories
+      - name: Set Java Version
         run: |
-          git clone https://github.com/kivy/buildozer
-          git clone https://github.com/jesstifies/THESIS.git
+          JAVA_PATH=$(find /usr/lib/jvm/ -maxdepth 3 -name java | grep "java-17-openjdk.*bin/java" | head -n 1)
+          if [ -z "$JAVA_PATH" ]; then
+            echo "Error: Java 17 binary not found in /usr/lib/jvm/!"
+            ls -la /usr/lib/jvm/
+            exit 1
+          fi
+          sudo update-alternatives --set java "$JAVA_PATH"
+          java -version
+          echo "JAVA_HOME=$(dirname $(dirname $JAVA_PATH))" >> $GITHUB_ENV
 
-      - name: Set up Buildozer
+      - name: Install Python Dependencies
         run: |
-          cd buildozer
-          python3 setup.py build
-          pip install -e .
-          cd ..
+          pip3 install --user --upgrade Cython==0.29.33 virtualenv appdirs
+          pip3 install --user --upgrade python-for-android buildozer
 
-      - name: Install project dependencies
+      - name: Setup Android SDK and NDK
+        uses: android-actions/setup-android@v3
+        with:
+          sdk-version: '33'
+          ndk-version: '25b'
+        env:
+          ANDROID_SDK_ROOT: /usr/local/lib/android/sdk
         run: |
-          cd THESIS
-          pip install -r requirements.txt
-          cd ..
+          echo "ANDROIDSDK=/usr/local/lib/android/sdk" >> $GITHUB_ENV
+          echo "ANDROIDNDK=/usr/local/lib/android/sdk/ndk/25b" >> $GITHUB_ENV
+          echo "PATH=/usr/local/lib/android/sdk/ndk/25b:$PATH" >> $GITHUB_ENV
 
-      - name: Build APK
+      - name: Patch libffi Recipe (Workaround)
         run: |
-          cd THESIS
-          buildozer android debug
-          cd ..
+          mkdir -p ~/.local/share/python-for-android/recipes/libffi
+          wget -q https://github.com/libffi/libffi/releases/download/v3.4.4/libffi-3.4.4.tar.gz
+          tar -xzf libffi-3.4.4.tar.gz -C ~/.local/share/python-for-android/recipes/libffi --strip-components=1
+          cat > ~/.local/share/python-for-android/recipes/libffi/__init__.py << 'EOF'
+          from pythonforandroid.recipe import CythonRecipe
+          from pythonforandroid.toolchain import shprint
+          import sh
+          class LibffiRecipe(CythonRecipe):
+              version = '3.4.4'
+              url = 'file://{path}/libffi-3.4.4.tar.gz'
+              depends = []
+              call_hostpython_via_targetpython = False
+              def build_arch(self, arch):
+                  env = self.get_recipe_env(arch)
+                  shprint(sh.Command('./configure'), 
+                          '--host=' + arch.triple, 
+                          '--prefix=' + self.ctx.get_python_install_dir(), 
+                          '--disable-static', 
+                          '--enable-shared', 
+                          _env=env)
+                  shprint(sh.make, '-j4', _env=env)
+          recipe = LibffiRecipe()
+          EOF
+          sed -i "s|{path}|$HOME/.local/share/python-for-android/recipes/libffi|g" ~/.local/share/python-for-android/recipes/libffi/__init__.py
+          echo "P4A_RECIPE_DIRS=$HOME/.local/share/python-for-android/recipes" >> $GITHUB_ENV
+
+      - name: Configure Buildozer
+        run: |
+          if [ ! -f buildozer.spec ]; then
+            buildozer init
+          fi
+          cat << EOF > buildozer.spec
+          [app]
+          title = PetWatch
+          package.name = petwatch
+          package.domain = org.example
+          source.dir = .
+          source.include_exts = py,png,jpg,kv,atlas
+          version = 1.0
+          requirements = python3,kivy,kivymd,opencv-python-headless,tflite-runtime,requests,numpy,pillow,ultralytics,libffi==3.4.4
+          android.permissions = INTERNET,CAMERA
+          android.api = 31
+          android.minapi = 21
+          android.sdk = 33
+          android.ndk = 25b
+          android.numeric_version = 1
+          p4a.local_recipes = $HOME/.local/share/python-for-android/recipes
+          p4a.storage_dir = $GITHUB_WORKSPACE/.buildozer/android/platform/build
+          log_level = 2
+          EOF
+
+      - name: Build APK with Buildozer
+        run: |
+          rm -rf .buildozer/android/platform/build*
+          buildozer -v android debug
+        env:
+          ANDROIDSDK: ${{ env.ANDROIDSDK }}
+          ANDROIDNDK: ${{ env.ANDROIDNDK }}
+          ANDROIDAPI: "31"
+          ANDROIDMINAPI: "21"
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Kivy-APK
-          path: THESIS/bin/*.apk
+          name: PetWatch-APK
+          path: bin/*.apk
