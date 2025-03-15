@@ -14,24 +14,39 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
-
       - name: Install dependencies
         run: |
           sudo apt update
-          sudo apt install -y zip openjdk-17-jdk
-          pip install --upgrade Cython virtualenv buildozer
+          sudo apt install -y git zip unzip openjdk-17-jdk python3-pip autoconf libtool pkg-config \
+                              zlib1g-dev libncurses5-dev libncursesw5-dev libtinfo5 cmake libffi-dev libssl-dev
+          pip3 install --user --upgrade Cython==0.29.33 virtualenv
+
+      - name: Clone repositories
+        run: |
+          git clone https://github.com/kivy/buildozer
+          git clone https://github.com/jesstifies/THESIS.git
+
+      - name: Set up Buildozer
+        run: |
+          cd buildozer
+          python3 setup.py build
+          pip install -e .
+          cd ..
+
+      - name: Install project dependencies
+        run: |
+          cd THESIS
+          pip install -r requirements.txt
+          cd ..
 
       - name: Build APK
         run: |
-          pip install --upgrade buildozer
+          cd THESIS
           buildozer android debug
+          cd ..
 
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
           name: Kivy-APK
-          path: bin/*.apk
+          path: THESIS/bin/*.apk
