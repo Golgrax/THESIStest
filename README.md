@@ -29,3 +29,10 @@ NOTES:
     - Perform git commit.
 
 6. All of the UI related codes will be inputted in .kv files (i.e., XML file).
+
+7. For converting .pt model to tflite.
+   - Open Terminal
+   - Enter "pip install onnx2tf onnxruntime onnx protobuf tflite_support --extra-index-url https://pypi.ngc.nvidia.com"
+   - Then open tflite_convert.py and run
+
+
