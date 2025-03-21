@@ -1,6 +1,5 @@
 name: 'Kivy App to APK'
 
-
 on:
   workflow_dispatch: # Allows manual triggering of the workflow
 
@@ -34,10 +33,10 @@ jobs:
           echo "Using Python==$(python --version)"
         shell: bash
       
-    - name: Install and upgrade dependencies
-      run: |
-        sudo apt update
-        sudo apt install -y git \
+      - name: Install and upgrade dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y git \
           zip \
           unzip \
           openjdk-17-jdk \
@@ -51,12 +50,9 @@ jobs:
           cmake \
           libffi-dev \
           libssl-dev
-        export PATH=$PATH:~/.local/bin/
-        python3 -m pip install --upgrade \
-          Cython==0.29.33 \
-          buildozer
-      shell: bash
-
+          export PATH=$PATH:~/.local/bin/
+          python3 -m pip install --upgrade Cython==0.29.33 buildozer
+        shell: bash
 
       - name: Install requirements if requirements.txt exists
         run: |
