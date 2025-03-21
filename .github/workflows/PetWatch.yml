@@ -1,5 +1,5 @@
 name: 'Kivy App to APK'
-description: 'Convert Kivy app to APK'
+
 
 on:
   workflow_dispatch: # Allows manual triggering of the workflow
