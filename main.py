@@ -1,6 +1,5 @@
 import os
 if 'ANDROID_AUGMENT' in os.environ:
-    import cv2
     import pytz
     import tensorflow.lite as tflite
     import requests
@@ -37,7 +36,6 @@ if 'ANDROID_AUGMENT' in os.environ:
     from PIL import Image as PILImage, ImageDraw, ImageFont
 
 else:
-    import cv2
     import pytz
     import tensorflow.lite as tflite
     import requests
