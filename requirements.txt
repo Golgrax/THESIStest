@@ -6,7 +6,6 @@ kivymd
 requests
 numpy
 pillow
-opencv
 tflite-runtime
 pytz
 matplotlib
