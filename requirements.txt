@@ -2,14 +2,11 @@
 #To install all of the libraries at once, enter "pip install -r requirements.txt" in the terminal.
 
 kivy
-requests
-buildozer
 kivymd
-psycopg2
-serial
-ultralytics
-opencv-python-headless
+requests
 numpy
 pillow
-tensorflow
-
+opencv
+tflite-runtime
+pytz
+matplotlib
