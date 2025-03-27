@@ -1,7 +1,5 @@
 import os
 if 'ANDROID_AUGMENT' in os.environ:
-    import pytz
-    import tensorflow.lite as tflite
     import requests
     import numpy as np
     import threading
@@ -36,8 +34,6 @@ if 'ANDROID_AUGMENT' in os.environ:
     from PIL import Image as PILImage, ImageDraw, ImageFont
 
 else:
-    import pytz
-    import tensorflow.lite as tflite
     import requests
     import numpy as np
     import threading
